@@ -818,6 +818,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sh-cat{font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
 .sh-cat.ent{color:var(--pink)}
 .sh-cat.asian{color:var(--red)}
+.sh-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.sh-filt{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:background .2s,color .2s,border-color .2s;-webkit-appearance:none}
+.sh-filt:hover{color:var(--text)}
+.sh-filt.active{background:rgba(88,196,176,.16);border-color:var(--teal);color:var(--teal)}
 .sh-addr{font-size:12px;color:var(--muted);line-height:1.4;margin-bottom:8px}
 .sh-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
 
@@ -979,6 +983,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
   <div class="section">
     <div class="sec-title">Shopping</div>
     <div class="sec-sub">Malls, tech, fragrance &amp; luxury — plus thrift &amp; vintage in the Asian Trade District</div>
+    <div class="sh-filters" id="sh-filters"></div>
     <div class="sh-grid" id="sh-grid"></div>
   </div>
 </div>
@@ -1134,37 +1139,37 @@ const ASIAN = [
 ];
 
 const SHOPPING = [
-  {id:'s1',name:'Micro Center',cat:'Tech & Electronics',addr:'13929 N Central Expy, Dallas TX 75243',
+  {id:'s1',name:'Micro Center',cat:'Tech & Electronics',tags:['Tech & Electronics'],addr:'13929 N Central Expy, Dallas TX 75243',
    desc:'Massive computer & electronics store — CPUs, GPUs, peripherals. Best tech selection in DFW.',
    lat:32.9095,lng:-96.7370,maps:'https://maps.google.com/?q=13929+N+Central+Expy+Dallas+TX',url:'https://www.microcenter.com/site/stores/dallas.aspx'},
-  {id:'s2',name:'IKEA University Park',cat:'Furniture & Home',addr:'8080 Park Ln, Dallas TX 75231',
+  {id:'s2',name:'IKEA University Park',cat:'Furniture & Home',tags:['Furniture & Home'],addr:'8080 Park Ln, Dallas TX 75231',
    desc:"Dallas's newest IKEA at The Shops at Park Lane, across from NorthPark Center.",
    lat:32.8681,lng:-96.7599,maps:'https://maps.google.com/?q=8080+Park+Ln+Dallas+TX',url:'https://www.ikea.com/us/en/stores/university-park/'},
-  {id:'s3',name:'Louis Vuitton — NorthPark',cat:'Luxury Fashion',addr:'400 NorthPark Ctr, Dallas TX 75225',
+  {id:'s3',name:'Louis Vuitton — NorthPark',cat:'Luxury Fashion',tags:['Luxury Fashion'],addr:'400 NorthPark Ctr, Dallas TX 75225',
    desc:'Full LV collection — leather goods, RTW, accessories — inside upscale NorthPark Center.',
    lat:32.8690,lng:-96.7748,maps:'https://maps.google.com/?q=Louis+Vuitton+NorthPark+Dallas',url:'https://us.louisvuitton.com/eng-us/stores/usa/dallas--northpark'},
-  {id:'s4',name:'The Scent Room',cat:'Fragrance',addr:'3699 McKinney Ave #301, Dallas TX 75204',
+  {id:'s4',name:'The Scent Room',cat:'Fragrance',tags:['Fragrance'],addr:'3699 McKinney Ave #301, Dallas TX 75204',
    desc:'Elevated perfumery in West Village specializing in fine and niche fragrances.',
    lat:32.8088,lng:-96.8014,maps:'https://maps.google.com/?q=3699+McKinney+Ave+Dallas+TX',url:'https://www.thescentroom.com/'},
-  {id:'s5',name:'NorthPark Center',cat:'Mall',addr:'8687 N Central Expy, Dallas TX 75225',
+  {id:'s5',name:'NorthPark Center',cat:'Mall',tags:['Mall'],addr:'8687 N Central Expy, Dallas TX 75225',
    desc:'Upscale mall with Apple, Nike, 200+ retailers, and world-class art installations.',
    lat:32.8686,lng:-96.7740,maps:'https://maps.google.com/?q=NorthPark+Center+Dallas+TX',url:'https://northparkcenter.com/'},
-  {id:'s6',name:'The Galleria Dallas',cat:'Mall',addr:'13350 Dallas Pkwy, Dallas TX 75240',
+  {id:'s6',name:'The Galleria Dallas',cat:'Mall',tags:['Mall'],addr:'13350 Dallas Pkwy, Dallas TX 75240',
    desc:'Three-level luxury mall 12 miles north of downtown with premium retailers and dining.',
    lat:32.9297,lng:-96.8199,maps:'https://maps.google.com/?q=13350+Dallas+Pkwy+Dallas+TX',url:'https://galleriadallas.com/'},
-  {id:'s7',name:'Amir Oud — House of Royal Fragrance',cat:'Fragrance',addr:'1411 E Campbell Rd #1900, Richardson TX 75081',
+  {id:'s7',name:'Amir Oud — House of Royal Fragrance',cat:'Fragrance',tags:['Fragrance'],addr:'1411 E Campbell Rd #1900, Richardson TX 75081',
    desc:'Boutique specializing in premium oud fragrances with an in-store Scent Bar for personalized sessions.',
    lat:32.9664,lng:-96.7283,maps:'https://maps.google.com/?q=1411+E+Campbell+Rd+Richardson+TX',url:'https://amiroud.com/'},
-  {id:'s8',name:'Buffalo Exchange',cat:'Thrift & Vintage',addr:'3424 Greenville Ave, Dallas TX 75206',
+  {id:'s8',name:'Buffalo Exchange',cat:'Thrift & Vintage',tags:['Thrift & Vintage'],addr:'3424 Greenville Ave, Dallas TX 75206',
    desc:'Curated buy-sell-trade resale — quality secondhand and vintage clothing, denim, and designer finds on Lower Greenville.',
    lat:32.8267,lng:-96.7702,maps:'https://maps.google.com/?q=Buffalo+Exchange+Greenville+Ave+Dallas+TX',url:'https://www.buffaloexchange.com/'},
-  {id:'s9',name:'Dolly Python',cat:'Thrift & Vintage',addr:'1916 N Haskell Ave, Dallas TX 75204',
+  {id:'s9',name:'Dolly Python',cat:'Thrift & Vintage',tags:['Thrift & Vintage'],addr:'1916 N Haskell Ave, Dallas TX 75204',
    desc:'Iconic Dallas vintage emporium — western wear, vintage denim, boots, jewelry, and oddities. A must for thrifters.',
    lat:32.7987,lng:-96.7847,maps:'https://maps.google.com/?q=Dolly+Python+Haskell+Ave+Dallas+TX',url:'https://www.google.com/search?q=Dolly+Python+Vintage+Dallas'},
-  {id:'s10',name:'Thrift Giant — Harry Hines',cat:'Thrift & Vintage · Asian District',addr:'10544 Harry Hines Blvd, Dallas TX 75220',
+  {id:'s10',name:'Thrift Giant — Harry Hines',cat:'Thrift & Vintage · Asian District',tags:['Thrift & Vintage','Asian District'],addr:'10544 Harry Hines Blvd, Dallas TX 75220',
    desc:'Big, well-organized thrift store right in the Asian Trade District — well-priced men\'s, women\'s and kids\' clothing, shoes, and housewares.',
    lat:32.8888,lng:-96.8878,maps:'https://maps.google.com/?q=Thrift+Giant+10544+Harry+Hines+Blvd+Dallas+TX',url:'https://www.google.com/search?q=Thrift+Giant+Harry+Hines+Dallas+TX'},
-  {id:'s11',name:'Harry Hines Bazaar',cat:'Flea Market · Asian District',addr:'10788 Harry Hines Blvd, Dallas TX 75220',
+  {id:'s11',name:'Harry Hines Bazaar',cat:'Flea Market · Asian District',tags:['Flea Market','Asian District'],addr:'10788 Harry Hines Blvd, Dallas TX 75220',
    desc:'Sprawling indoor bazaar of 200+ vendors in the Asian Trade District — vintage finds, apparel, accessories, and bargain hunting. Open Thursday–Sunday.',
    lat:32.8918,lng:-96.8908,maps:'https://maps.google.com/?q=Harry+Hines+Bazaar+Dallas+TX',url:'https://www.google.com/search?q=Harry+Hines+Bazaar+Dallas+TX'},
 ];
@@ -1204,7 +1209,8 @@ document.addEventListener('DOMContentLoaded', function() {
   renderRestaurants();
   renderPoi(ENTERTAINMENT, 'ent-grid');
   renderPoi(ASIAN, 'asian-grid');
-  renderPoi(SHOPPING, 'sh-grid');
+  renderShoppingFilters();
+  renderShoppingGrid();
   renderGyms();
   renderCalc();
   try { initMap(); } catch(e) { console.warn('Map init error:', e); }
@@ -1474,6 +1480,42 @@ function renderRestaurants() {
 function toggleBr(h) {
   h.classList.toggle('open');
   h.nextElementSibling.classList.toggle('open');
+}
+
+// ─── SHOPPING FILTERS ───────────────────────────────────────────────────────────────
+let shoppingActiveTags = [];
+
+function shoppingTags() {
+  var set = {};
+  SHOPPING.forEach(function(p){ (p.tags||[]).forEach(function(t){ set[t] = true; }); });
+  return Object.keys(set).sort();
+}
+
+function setShoppingFilter(tag) {
+  if (tag === null) {
+    shoppingActiveTags = [];
+  } else {
+    var i = shoppingActiveTags.indexOf(tag);
+    if (i === -1) { shoppingActiveTags.push(tag); } else { shoppingActiveTags.splice(i, 1); }
+  }
+  renderShoppingFilters();
+  renderShoppingGrid();
+}
+
+function renderShoppingFilters() {
+  var html = '<button class="sh-filt'+(shoppingActiveTags.length?'':' active')+'" onclick="setShoppingFilter(null)">All</button>';
+  shoppingTags().forEach(function(t){
+    var active = shoppingActiveTags.indexOf(t) !== -1;
+    html += '<button class="sh-filt'+(active?' active':'')+'" onclick="setShoppingFilter(\''+t+'\')">'+t+'</button>';
+  });
+  document.getElementById('sh-filters').innerHTML = html;
+}
+
+function renderShoppingGrid() {
+  var list = shoppingActiveTags.length
+    ? SHOPPING.filter(function(p){ return (p.tags||[]).some(function(t){ return shoppingActiveTags.indexOf(t) !== -1; }); })
+    : SHOPPING;
+  renderPoi(list, 'sh-grid');
 }
 
 // ─── POI GRID (Shopping / Entertainment / Asian District) ──────────────────────────

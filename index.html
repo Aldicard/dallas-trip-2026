@@ -770,6 +770,7 @@ html[data-theme="dark"] .opt.dark{background:var(--accent);color:var(--accent-in
 .icat{font-size:12.5px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .iright{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .price{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.subprice{font-size:11.5px;font-weight:500;color:var(--muted);white-space:nowrap}
 .pill{font-size:10px;font-weight:700;letter-spacing:.3px;color:var(--accent);background:var(--accent-soft);
   border:1px solid var(--accent-line);padding:3px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap}
 .igo{color:var(--muted);flex-shrink:0;display:flex}
@@ -791,7 +792,7 @@ html[data-theme="dark"] .sky-night{display:block}
 .hero-cap .m i{width:3px;height:3px;border-radius:50%;background:#fff;opacity:.6;align-self:center}
 
 /* ─── OVERVIEW: CONTENT ──────────────────────────────────────────── */
-.content-d{padding:26px 22px;display:grid;grid-template-columns:1fr;gap:30px;align-items:start}
+.content-d{padding:26px 22px 112px;display:grid;grid-template-columns:1fr;gap:30px;align-items:start}
 .sec-h{font-family:'Fraunces',serif;font-size:26px;font-weight:500;letter-spacing:-.5px}
 .sec-note{font-size:13.5px;color:var(--muted);margin-top:7px;line-height:1.5;max-width:360px}
 .plan{margin-top:16px;border-top:1px solid var(--line)}
@@ -901,8 +902,8 @@ html[data-theme="dark"] .sky-night{display:block}
 .pu-price{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--accent);margin:2px 0 8px}
 .pu-price span{font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);font-weight:400}
 .pu-a{display:block;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;text-decoration:none;margin-top:6px}
-.pu-a-p{background:var(--accent);color:var(--accent-ink)}
-.pu-a-s{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.leaflet-popup-content a.pu-a-p{background:var(--accent);color:var(--accent-ink)}
+.leaflet-popup-content a.pu-a-s{background:transparent;color:var(--muted);border:1px solid var(--line)}
 
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -1009,14 +1010,6 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
       <div class="mapwrap">
         <div id="map"></div>
         <div class="legend" id="legend"></div>
-        <div class="sheet">
-          <div class="handle"></div>
-          <div class="sh-h">Everything on the map</div>
-          <div class="srow"><span class="dot" style="background:var(--cat-eat)"></span>Restaurants<span class="c">9</span></div>
-          <div class="srow"><span class="dot" style="background:var(--cat-climb)"></span>Climb &amp; Do<span class="c">7</span></div>
-          <div class="srow"><span class="dot" style="background:var(--cat-shop)"></span>Shopping<span class="c">11</span></div>
-          <div class="srow"><span class="dot" style="background:var(--cat-asian)"></span>Asian District<span class="c">4</span></div>
-        </div>
       </div>
     </section>
 
@@ -1131,17 +1124,17 @@ const RESTAURANTS = [
   {
     bracket:'budget', label:'$10–20', color:'#6bc46b',
     items:[
-      {id:'r1',name:'Resident Taqueria',cuisine:'Mexican / tacos',area:'Lake Highlands',price:'$13–15',tags:['Tacos'],
+      {id:'r1',rating:'4.6',name:'Resident Taqueria',cuisine:'Mexican / tacos',area:'Lake Highlands',price:'$13–15',tags:['Tacos'],
        desc:'Chef-driven taqueria with fresh made-to-order tortillas and slow-braised meats. Casual, high-quality tacos.',
        addr:'9661 Audelia Rd #112, Dallas TX 75238',lat:32.8784,lng:-96.7188,
        maps:'https://maps.google.com/?q=9661+Audelia+Rd+Dallas+TX',
        url:'https://www.google.com/search?q=Resident+Taqueria+Dallas+TX'},
-      {id:'r2',name:'Cane Rosso',cuisine:'Neapolitan pizza',area:'Deep Ellum',price:'$10–15',tags:['Italian'],
+      {id:'r2',rating:'4.4',name:'Cane Rosso',cuisine:'Neapolitan pizza',area:'Deep Ellum',price:'$10–15',tags:['Italian'],
        desc:'Authentic Neapolitan pizza in Deep Ellum. $10 margherita pies during happy hour, wood-fired crust.',
        addr:'2612 Commerce St, Dallas TX 75226',lat:32.7825,lng:-96.7855,
        maps:'https://maps.google.com/?q=2612+Commerce+St+Dallas+TX',
        url:'https://www.google.com/search?q=Cane+Rosso+Deep+Ellum+Dallas'},
-      {id:'r3',name:'Roots Chicken Shak',cuisine:'Southern fried chicken',area:'Legacy Hall',price:'$12–15',tags:[],
+      {id:'r3',rating:'4.4',name:'Roots Chicken Shak',cuisine:'Southern fried chicken',area:'Legacy Hall',price:'$12–15',tags:[],
        desc:"Chef Tiffany Derry's duck-fat fried chicken at Legacy Hall. Crispy tenders combo with fries about $12.",
        addr:'7800 Windrose Ave, Plano TX 75024',lat:33.0778,lng:-96.8285,
        maps:'https://maps.google.com/?q=7800+Windrose+Ave+Plano+TX',
@@ -1151,19 +1144,19 @@ const RESTAURANTS = [
   {
     bracket:'mid', label:'$20–50', color:'#f0a030',
     items:[
-      {id:'r4',name:'Pecan Lodge',cuisine:'Texas BBQ',area:'Deep Ellum',price:'$20–35',tags:['BBQ'],pill:'Group pick',
+      {id:'r4',rating:'4.6',name:'Pecan Lodge',cuisine:'Texas BBQ',area:'Deep Ellum',price:'$20–35',tags:['BBQ'],pill:'Group pick',
        desc:"Dallas's iconic BBQ joint in Deep Ellum. Fatty brisket, jalapeño cheese sausage, classic sides.",
        addr:'2702 Main St, Dallas TX 75226',lat:32.7837,lng:-96.7860,
        maps:'https://maps.google.com/?q=2702+Main+St+Dallas+TX',
        url:'https://www.google.com/search?q=Pecan+Lodge+Deep+Ellum+Dallas+TX'},
-      {id:'r5',name:'Via Triozzi',cuisine:'Italian',area:'Lower Greenville',price:'$25–45',tags:['Italian'],
+      {id:'r5',rating:'4.5',name:'Via Triozzi',cuisine:'Italian',area:'Lower Greenville',price:'$25–45',tags:['Italian'],
        desc:'Lower Greenville trattoria with handmade pasta and a legendary 20-layer lasagna. Seasonal menu.',
        addr:'1806 Greenville Ave, Dallas TX 75206',lat:32.8244,lng:-96.7771,
        maps:'https://maps.google.com/?q=1806+Greenville+Ave+Dallas+TX',
        url:'https://www.google.com/search?q=Via+Triozzi+Greenville+Ave+Dallas+TX'},
-      {id:'r6',name:'Pesca Coastal Classics',cuisine:'Coastal Mexican / seafood',area:'Trinity Groves',price:'$25–40',tags:['Seafood'],
+      {id:'r6',rating:'4.4',name:'Pesca Coastal Classics',cuisine:'Coastal Mexican / seafood',area:'Trinity Groves',price:'$25–40',tags:['Seafood'],
        desc:'Coastal Mexican in Trinity Groves with aguachiles, ceviches, and seafood boils. Great atmosphere.',
-       addr:'Trinity Groves, West Dallas TX',lat:32.7600,lng:-96.8300,
+       addr:'3011 Gulden Ln #107, West Dallas TX 75212',lat:32.7787,lng:-96.8360,
        maps:'https://maps.google.com/?q=Trinity+Groves+Dallas+TX',
        url:'https://www.google.com/search?q=Pesca+Coastal+Classics+Trinity+Groves+Dallas'},
     ]
@@ -1171,17 +1164,17 @@ const RESTAURANTS = [
   {
     bracket:'upscale', label:'$50–100', color:'#e07060',
     items:[
-      {id:'r7',name:'Georgie',cuisine:'New American',area:'Knox-Henderson',price:'$75–100',tags:['Fine dining'],
+      {id:'r7',rating:'4.5',name:'Georgie',cuisine:'New American',area:'Knox-Henderson',price:'$75–100',tags:['Fine dining'],
        desc:'Michelin-recognized restaurant. French Laundry-trained chef, seasonal Texas ingredients, stunning space.',
        addr:'4514 Travis St #132, Dallas TX 75205',lat:32.8547,lng:-96.8089,
        maps:'https://maps.google.com/?q=4514+Travis+St+Dallas+TX',
        url:'https://www.google.com/search?q=Georgie+Restaurant+Travis+St+Dallas+TX'},
-      {id:'r8',name:'Carbone Vino',cuisine:'Upscale Italian',area:'Design District',price:'$50–80',tags:['Italian','Fine dining'],
+      {id:'r8',rating:'4.3',name:'Carbone Vino',cuisine:'Upscale Italian',area:'Design District',price:'$50–80',tags:['Italian','Fine dining'],
        desc:"Mario Carbone's upscale Italian in the Design District. Handmade pasta, grand salumi, impressive wine.",
-       addr:'1617 Hi Line Dr, Dallas TX 75207',lat:32.8032,lng:-96.8127,
+       addr:'1617 Hi Line Dr #390, Dallas TX 75207',lat:32.8032,lng:-96.8127,
        maps:'https://maps.google.com/?q=1617+Hi+Line+Dr+Dallas+TX',
        url:'https://www.google.com/search?q=Carbone+Vino+Design+District+Dallas+TX'},
-      {id:'r9',name:'Sanjh',cuisine:'Modern Indian fine dining',area:'Las Colinas',price:'$60–90',tags:['Fine dining'],
+      {id:'r9',rating:'4.6',name:'Sanjh',cuisine:'Modern Indian fine dining',area:'Las Colinas',price:'$60–90',tags:['Fine dining'],
        desc:'Upscale Indian fine dining in Las Colinas overlooking the water. Michelin-pedigree cooking.',
        addr:"5250 N O'Connor Blvd #146, Irving TX 75039",lat:32.8698,lng:-96.9468,
        maps:'https://maps.google.com/?q=5250+N+OConnor+Blvd+Irving+TX',
@@ -1192,13 +1185,13 @@ const RESTAURANTS = [
 
 // Fun with Fane / attractions
 const ENTERTAINMENT = [
-  {id:'e1',name:'Dallas Zoo',cat:'Zoo · 106 acres, largest in Texas',
+  {id:'e1',rating:'4.5',name:'Dallas Zoo',cat:'Zoo · 106 acres, largest in Texas',
    addr:'650 S R.L. Thornton Fwy, Dallas TX 75203',
    desc:"Texas's largest zoo: 106 acres with the Giants of the Savanna habitat, a monorail, gorillas, elephants, and a children's petting zoo. Just minutes from our Airbnb.",
    lat:32.7415,lng:-96.8154,
    maps:'https://maps.google.com/?q=Dallas+Zoo+650+S+RL+Thornton+Fwy+Dallas+TX',
    url:'https://dwazoo.com/'},
-  {id:'e2',name:'Perot Museum',cat:'Science & nature · Victory Park',
+  {id:'e2',rating:'4.6',name:'Perot Museum',cat:'Science & nature · Victory Park',
    addr:'2201 N Field St, Dallas TX 75201',
    desc:"The Perot Museum of Nature and Science downtown, home to the hands-on Children's Museum: interactive exhibits plus dinosaurs, gems, and a birds-of-paradise theater across five floors.",
    lat:32.7868,lng:-96.8065,
@@ -1237,57 +1230,59 @@ const ASIAN = [
 ];
 
 const SHOPPING = [
-  {id:'s1',name:'Micro Center',cat:'Tech & electronics',tags:['Tech'],addr:'13929 N Central Expy, Dallas TX 75243',
+  {id:'s1',rating:'4.4',name:'Micro Center',cat:'Tech & electronics',tags:['Tech'],addr:'13929 N Central Expy, Dallas TX 75243',
    desc:'Massive computer & electronics store: CPUs, GPUs, peripherals. Best tech selection in DFW.',
    lat:32.9095,lng:-96.7370,maps:'https://maps.google.com/?q=13929+N+Central+Expy+Dallas+TX',url:'https://www.microcenter.com/site/stores/dallas.aspx'},
-  {id:'s2',name:'IKEA University Park',cat:'Furniture & home',tags:['Home'],addr:'8080 Park Ln, Dallas TX 75231',pill:'On the way out',
-   desc:"Dallas's newest IKEA at The Shops at Park Lane, across from NorthPark Center.",
-   lat:32.8681,lng:-96.7599,maps:'https://maps.google.com/?q=8080+Park+Ln+Dallas+TX',url:'https://www.ikea.com/us/en/stores/university-park/'},
-  {id:'s3',name:'Louis Vuitton · NorthPark',cat:'Luxury fashion',tags:['Luxury'],addr:'400 NorthPark Ctr, Dallas TX 75225',
+  {id:'s2',rating:'4.5',name:'IKEA Frisco',cat:'Furniture & home · Frisco',tags:['Home'],addr:'7171 IKEA Dr, Frisco TX 75034',pill:'On the way out',
+   desc:'The DFW flagship IKEA, north of Dallas on the drive home toward Norman. Furniture, home goods, and the famous cafeteria.',
+   lat:33.0967,lng:-96.8267,maps:'https://maps.google.com/?q=7171+IKEA+Dr+Frisco+TX',url:'https://www.ikea.com/us/en/stores/frisco/'},
+  {id:'s3',rating:'4.3',name:'Louis Vuitton · NorthPark',cat:'Luxury fashion',tags:['Luxury'],addr:'400 NorthPark Ctr, Dallas TX 75225',
    desc:'Full LV collection (leather goods, RTW, accessories) inside upscale NorthPark Center.',
    lat:32.8690,lng:-96.7748,maps:'https://maps.google.com/?q=Louis+Vuitton+NorthPark+Dallas',url:'https://us.louisvuitton.com/eng-us/stores/usa/dallas--northpark'},
-  {id:'s4',name:'The Scent Room',cat:'Fragrance · Uptown',tags:['Fragrance'],addr:'3699 McKinney Ave #301, Dallas TX 75204',
+  {id:'s4',rating:'4.8',name:'The Scent Room',cat:'Fragrance · Uptown',tags:['Fragrance'],addr:'3699 McKinney Ave #301, Dallas TX 75204',
    desc:'Elevated perfumery in West Village specializing in fine and niche fragrances.',
    lat:32.8088,lng:-96.8014,maps:'https://maps.google.com/?q=3699+McKinney+Ave+Dallas+TX',url:'https://www.thescentroom.com/'},
-  {id:'s5',name:'NorthPark Center',cat:'Mall · flagship luxury & art',tags:['Malls'],addr:'8687 N Central Expy, Dallas TX 75225',
+  {id:'s5',rating:'4.5',name:'NorthPark Center',cat:'Mall · flagship luxury & art',tags:['Malls'],addr:'8687 N Central Expy, Dallas TX 75225',
    desc:'Upscale mall with Apple, Nike, 200+ retailers, and world-class art installations.',
    lat:32.8686,lng:-96.7740,maps:'https://maps.google.com/?q=NorthPark+Center+Dallas+TX',url:'https://northparkcenter.com/'},
-  {id:'s6',name:'The Galleria Dallas',cat:'Mall · ice rink + 200 stores',tags:['Malls'],addr:'13350 Dallas Pkwy, Dallas TX 75240',
+  {id:'s6',rating:'4.5',name:'The Galleria Dallas',cat:'Mall · ice rink + 200 stores',tags:['Malls'],addr:'13350 Dallas Pkwy, Dallas TX 75240',
    desc:'Three-level luxury mall 12 miles north of downtown with premium retailers and dining.',
    lat:32.9297,lng:-96.8199,maps:'https://maps.google.com/?q=13350+Dallas+Pkwy+Dallas+TX',url:'https://galleriadallas.com/'},
-  {id:'s7',name:'Amir Oud · House of Royal Fragrance',cat:'Fragrance · Richardson',tags:['Fragrance'],addr:'1411 E Campbell Rd #1900, Richardson TX 75081',
+  {id:'s7',rating:'4.9',name:'Amir Oud · House of Royal Fragrance',cat:'Fragrance · Richardson',tags:['Fragrance'],addr:'1411 E Campbell Rd #1900, Richardson TX 75081',
    desc:'Boutique specializing in premium oud fragrances with an in-store scent bar for personalized sessions.',
    lat:32.9664,lng:-96.7283,maps:'https://maps.google.com/?q=1411+E+Campbell+Rd+Richardson+TX',url:'https://amiroud.com/'},
-  {id:'s8',name:'Buffalo Exchange',cat:'Thrift & vintage · Greenville',tags:['Thrift & vintage'],addr:'3424 Greenville Ave, Dallas TX 75206',
+  {id:'s8',rating:'4.0',name:'Buffalo Exchange',cat:'Thrift & vintage · Greenville',tags:['Thrift & vintage'],addr:'3424 Greenville Ave, Dallas TX 75206',
    desc:'Curated buy-sell-trade resale: quality secondhand and vintage clothing, denim, and designer finds on Lower Greenville.',
    lat:32.8267,lng:-96.7702,maps:'https://maps.google.com/?q=Buffalo+Exchange+Greenville+Ave+Dallas+TX',url:'https://www.buffaloexchange.com/'},
-  {id:'s9',name:'Dolly Python',cat:'Thrift & vintage · East Dallas',tags:['Thrift & vintage'],addr:'1916 N Haskell Ave, Dallas TX 75204',
+  {id:'s9',rating:'4.6',name:'Dolly Python',cat:'Thrift & vintage · East Dallas',tags:['Thrift & vintage'],addr:'1916 N Haskell Ave, Dallas TX 75204',
    desc:'Iconic Dallas vintage emporium: western wear, vintage denim, boots, jewelry, and oddities. A must for thrifters.',
    lat:32.7987,lng:-96.7847,maps:'https://maps.google.com/?q=Dolly+Python+Haskell+Ave+Dallas+TX',url:'https://www.google.com/search?q=Dolly+Python+Vintage+Dallas'},
-  {id:'s10',name:'Thrift Giant · Harry Hines',cat:'Thrift · Asian District',tags:['Thrift & vintage','Asian District'],addr:'10544 Harry Hines Blvd, Dallas TX 75220',
+  {id:'s10',rating:'4.3',name:'Thrift Giant · Harry Hines',cat:'Thrift · Asian District',tags:['Thrift & vintage','Asian District'],addr:'10544 Harry Hines Blvd, Dallas TX 75220',
    desc:"Big, well-organized thrift store right in the Asian Trade District: well-priced men's, women's and kids' clothing, shoes, and housewares.",
    lat:32.8888,lng:-96.8878,maps:'https://maps.google.com/?q=Thrift+Giant+10544+Harry+Hines+Blvd+Dallas+TX',url:'https://www.google.com/search?q=Thrift+Giant+Harry+Hines+Dallas+TX'},
-  {id:'s11',name:'Harry Hines Bazaar',cat:'Flea market · Asian District',tags:['Flea market','Asian District'],addr:'10788 Harry Hines Blvd, Dallas TX 75220',
+  {id:'s11',rating:'4.1',name:'Harry Hines Bazaar',cat:'Flea market · Asian District',tags:['Flea market','Asian District'],addr:'10788 Harry Hines Blvd, Dallas TX 75220',
    desc:'Sprawling indoor bazaar of 200+ vendors in the Asian Trade District: vintage finds, apparel, accessories, and bargain hunting. Open Thursday–Sunday.',
    lat:32.8918,lng:-96.8908,maps:'https://maps.google.com/?q=Harry+Hines+Bazaar+Dallas+TX',url:'https://www.google.com/search?q=Harry+Hines+Bazaar+Dallas+TX'},
 ];
 
+// All DFW Movement locations (verified open, July 2026). Bouldering Project Dallas
+// and the Carrollton grain-silo gym both closed, so they are removed.
 const GYMS = [
-  {id:'g1',name:'Movement Design District',sub:'Ropes + bouldering · Glass St',rating:'4.6',pill:'',addr:'141 Glass St, Dallas TX 75207',
-   desc:"DFW's largest gym at 45,000 sq ft with 56-ft walls. Bouldering, lead, top rope, yoga, sauna.",
-   lat:32.7899,lng:-96.8231,maps:'https://maps.google.com/?q=141+Glass+St+Dallas+TX',url:'https://movementgyms.com/design-district/'},
-  {id:'g2',name:'Movement The Hill',sub:'Ropes + bouldering · Walnut Hill',rating:'4.6',pill:'',addr:'8021 Walnut Hill Ln, Dallas TX 75231',
-   desc:'Bouldering-focused Movement location in North Dallas. Member access shared across all Movement locations.',
-   lat:32.8813,lng:-96.7686,maps:'https://maps.google.com/?q=8021+Walnut+Hill+Ln+Dallas+TX',url:'https://movementgyms.com/the-hill/'},
-  {id:'g3',name:'Bouldering Project Dallas',sub:'35,000 sq ft · Design District',rating:'4.7',pill:'Top rated',addr:'1330 Conant St, Dallas TX 75207',
-   desc:'35,000 sq ft Design District facility. 8,500 sq ft bouldering, fitness center, yoga studio, saunas.',
-   lat:32.7950,lng:-96.8200,maps:'https://maps.google.com/?q=1330+Conant+St+Dallas+TX',url:'https://boulderingproject.com/location/design-district/'},
-  {id:'g4',name:'Movement Fort Worth',sub:'Ropes + bouldering · Fort Worth',rating:'4.5',pill:'',addr:'2828 W Lancaster Ave, Fort Worth TX 76107',
-   desc:'Full-service Movement gym about 45 min west. Bouldering, lead, top rope, yoga, same network as Design District.',
+  {id:'g1',rating:'4.8',name:'Movement Fort Worth',sub:'Bouldering · Fort Worth',pill:'Top rated',addr:'2828 W Lancaster Ave, Fort Worth TX 76107',
+   desc:"Bouldering-focused gym in Fort Worth's Cultural District, about 45 min west. Same Movement network as the Dallas gyms.",
    lat:32.7305,lng:-97.3580,maps:'https://maps.google.com/?q=2828+W+Lancaster+Ave+Fort+Worth+TX',url:'https://movementgyms.com/fort-worth/'},
-  {id:'g5',name:'N. Texas Outdoor Pursuit Center',sub:'Climbing in historic grain silos',rating:'4.4',pill:'Unique',addr:'Downtown Carrollton, TX (Historic Grain Silos)',
-   desc:'Outdoor climbing inside historic grain silos: 120-foot natural wall heights. A one-of-a-kind Texas experience.',
-   lat:32.9766,lng:-96.8900,maps:'https://maps.google.com/?q=North+Texas+Outdoor+Pursuit+Center+Carrollton+TX',url:'https://maps.google.com/?q=North+Texas+Outdoor+Pursuit+Center'},
+  {id:'g2',rating:'4.7',name:'Movement Design District',sub:'45,000 sq ft · Design District',pill:'Largest',addr:'141 Glass St, Dallas TX 75207',
+   desc:"DFW's largest gym at 45,000 sq ft with 56-ft walls. Bouldering, lead, top rope, yoga, and a rooftop patio.",
+   lat:32.7899,lng:-96.8231,maps:'https://maps.google.com/?q=141+Glass+St+Dallas+TX',url:'https://movementgyms.com/design-district/'},
+  {id:'g3',rating:'4.6',name:'Movement The Hill',sub:'Bouldering · Walnut Hill',pill:'',addr:'8021 Walnut Hill Ln, Dallas TX 75231',
+   desc:'37,000 sq ft of bouldering under natural light, plus a yoga studio and multi-level cardio and weights. Free parking.',
+   lat:32.8813,lng:-96.7686,maps:'https://maps.google.com/?q=8021+Walnut+Hill+Ln+Dallas+TX',url:'https://movementgyms.com/the-hill/'},
+  {id:'g4',rating:'4.4',name:'Movement Grapevine',sub:'Ropes + bouldering · Grapevine',pill:'',addr:'3105 William D Tate Ave, Grapevine TX 76051',
+   desc:'Three-story, 36,000 sq ft gym with top rope, lead, and bouldering, plus fitness equipment and a yoga studio.',
+   lat:32.9343,lng:-97.0746,maps:'https://maps.google.com/?q=3105+William+D+Tate+Ave+Grapevine+TX',url:'https://movementgyms.com/grapevine/'},
+  {id:'g5',rating:'4.4',name:'Movement Plano',sub:'Ropes + bouldering · Plano',pill:'',addr:'525 Talbert Dr, Plano TX 75075',
+   desc:'32,000 sq ft with 5,000 sq ft of bouldering and 20,000 sq ft of rope climbing up to 55-ft walls.',
+   lat:33.0262,lng:-96.7548,maps:'https://maps.google.com/?q=525+Talbert+Dr+Plano+TX',url:'https://movementgyms.com/plano/'},
 ];
 
 // ─── STATE ──────────────────────────────────────────────────────────────────────
@@ -1388,7 +1383,7 @@ function recolorMarkers() {
 }
 function addMarker(lat, lng, cat, layerKey, popupHtml, z) {
   var m = L.marker([lat,lng], {icon:markerIcon(cat), zIndexOffset:(z||0)}).addTo(layers[layerKey]);
-  if (popupHtml) m.bindPopup(popupHtml, {maxWidth:250});
+  if (popupHtml) m.bindPopup(popupHtml, {maxWidth:250, autoPanPaddingTopLeft:[16,150], autoPanPaddingBottomRight:[16,28]});
   allMarkers.push({marker:m, cat:cat});
   return m;
 }
@@ -1492,8 +1487,9 @@ function initials(name){
 }
 function itemRow(o){
   var right = '';
-  if (o.pill)  right += '<span class="pill">'+o.pill+'</span>';
-  if (o.price) right += '<span class="price">'+o.price+'</span>';
+  if (o.pill)   right += '<span class="pill">'+o.pill+'</span>';
+  if (o.rating) right += '<span class="price">★ '+o.rating+'</span>';
+  if (o.price)  right += '<span class="subprice">'+o.price+'</span>';
   var tail = right ? '<div class="iright">'+right+'</div>'
                    : (o.chevron ? '<div class="igo"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>' : '');
   return '<div class="item" onclick="flyTo('+o.lat+','+o.lng+',\''+o.id+'\')">' +
@@ -1508,10 +1504,10 @@ const EAT_CHIPS = ['All','BBQ','Tacos','Italian','Seafood','Fine dining','Asian 
 function eatItems(){
   var arr = [];
   RESTAURANTS.forEach(function(br){ br.items.forEach(function(r){
-    arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng});
+    arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,rating:r.rating,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng});
   }); });
   ASIAN.filter(function(a){ return a.eat; }).forEach(function(a){
-    arr.push({id:a.id,name:a.name,sub:a.eatCuisine+' · Asian District',price:'',pill:'',tags:['Asian District'],lat:a.lat,lng:a.lng});
+    arr.push({id:a.id,name:a.name,sub:a.eatCuisine+' · Asian District',price:'',rating:'',pill:'',tags:['Asian District'],lat:a.lat,lng:a.lng});
   });
   return arr;
 }
@@ -1521,6 +1517,7 @@ function renderEat(){
     return '<div class="chip'+(t===eatFilter?' on':'')+'" onclick="setEatFilter(\''+t+'\')">'+t+'</div>';
   }).join('');
   var list = eatItems().filter(function(o){ return eatFilter==='All' || (o.tags.indexOf(eatFilter) !== -1); });
+  list.sort(function(a,b){ return (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0); });
   document.getElementById('eat-list').innerHTML = list.map(itemRow).join('');
 }
 
@@ -1530,8 +1527,9 @@ function renderDo(){
   document.getElementById('gy-list').innerHTML = gyms.map(function(g){
     return itemRow({id:g.id,name:g.name,sub:g.sub,price:'★ '+g.rating,pill:g.pill,lat:g.lat,lng:g.lng});
   }).join('');
-  document.getElementById('ent-list').innerHTML = ENTERTAINMENT.map(function(p){
-    return itemRow({id:p.id,name:p.name,sub:p.cat,chevron:true,lat:p.lat,lng:p.lng});
+  var ents = ENTERTAINMENT.slice().sort(function(a,b){ return parseFloat(b.rating) - parseFloat(a.rating); });
+  document.getElementById('ent-list').innerHTML = ents.map(function(p){
+    return itemRow({id:p.id,name:p.name,sub:p.cat,rating:p.rating,lat:p.lat,lng:p.lng});
   }).join('');
 }
 
@@ -1539,10 +1537,10 @@ function renderDo(){
 let shopFilter = 'All';
 function shopItems(){
   var arr = SHOPPING.map(function(s){
-    return {id:s.id,name:s.name,sub:s.cat,tags:s.tags||[],pill:s.pill||'',chevron:!s.pill,lat:s.lat,lng:s.lng};
+    return {id:s.id,name:s.name,sub:s.cat,tags:s.tags||[],pill:s.pill||'',rating:s.rating,lat:s.lat,lng:s.lng};
   });
   var h = ASIAN.filter(function(a){ return a.id==='as3'; })[0];
-  if (h) arr.push({id:h.id,name:h.name,sub:'Korean grocery · Asian District',tags:['Asian District'],chevron:true,lat:h.lat,lng:h.lng});
+  if (h) arr.push({id:h.id,name:h.name,sub:'Korean grocery · Asian District',tags:['Asian District'],rating:'4.5',lat:h.lat,lng:h.lng});
   return arr;
 }
 function shopTags(){
@@ -1558,6 +1556,7 @@ function renderShop(){
     return '<div class="chip'+(t===shopFilter?' on':'')+'" onclick="setShopFilter(\''+t+'\')">'+t+'</div>';
   }).join('');
   var list = shopItems().filter(function(o){ return shopFilter==='All' || (o.tags.indexOf(shopFilter) !== -1); });
+  list.sort(function(a,b){ return (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0); });
   document.getElementById('sh-grid').innerHTML = list.map(itemRow).join('');
 }
 

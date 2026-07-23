@@ -1,0 +1,73 @@
+Hey everyone!
+
+I'm sending over the Dallas Trip Planner — it's an interactive HTML file with our Airbnb options, cost breakdown, the map with all our stops, restaurants, shopping, and climbing gyms. You can also vote on your favorite Airbnb directly from the file.
+
+To get everything working you need to open it in a browser (Chrome, Safari, Firefox). If it opens in a preview or reader instead, the map will be black and nothing will be clickable. Follow the steps for your device below.
+
+
+——————————————————————————
+💻 DESKTOP (Windows or Mac)
+——————————————————————————
+
+1. Download the attached file (dallas-trip.html)
+2. Find it in your Downloads folder
+3. Double-click it — it will open in your browser automatically
+
+If it opens in a text editor instead, right-click the file, choose "Open with," and select Chrome, Firefox, Safari, or Edge.
+
+
+——————————————————————————
+📱 iPHONE
+——————————————————————————
+
+iPhone is the trickiest. Tapping the attachment normally opens a broken black preview. Here is how to get around that:
+
+From the Mail app:
+1. Tap the attachment to open the preview
+2. Tap the Share icon (the box with an arrow) in the bottom-left corner
+3. Tap "Open in Safari"
+
+From iMessage:
+1. Tap and HOLD the attachment (don't just tap)
+2. Tap Share
+3. Tap "Open in Safari"
+
+From the Gmail app:
+1. Tap the attachment to download it
+2. Tap the three dots in the top-right corner
+3. Tap "Open in Safari"
+
+From the Files app:
+1. Tap and HOLD the file (don't just tap)
+2. Tap Share
+3. Tap "Open in Safari"
+
+
+——————————————————————————
+🤖 ANDROID
+——————————————————————————
+
+From Gmail:
+1. Tap the attachment to download it
+2. Tap Open — Chrome should launch automatically
+3. If a different app opens instead, tap the three dots and choose "Open with Chrome"
+
+From Messages or your Files app:
+1. Tap the file
+2. Select Chrome when asked which app to use
+
+Note: Android may show a warning saying "this file type can harm your device." This is a generic warning for HTML files — it is safe to tap OK.
+
+
+——————————————————————————
+✅ YOU'LL KNOW IT'S WORKING WHEN YOU SEE:
+——————————————————————————
+
+- A dark page with a gold "Dallas Trip" header
+- Five tabs across the top (Map, Airbnbs & Cost, Restaurants, Shopping, Gyms)
+- A colorful interactive map with pins — not a black rectangle
+- Tapping a pin shows a popup with info
+
+If it's still broken after trying the steps above, make sure you're in Safari (iPhone) or Chrome (Android) and not a built-in preview tool.
+
+Let me know if you run into any issues!

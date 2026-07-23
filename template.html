@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Dallas Trip — July 24–26, 2026</title>
+  <style>
+<!--LEAFLET_CSS-->
+/* ─── RESET & VARS ───────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d1117;--card:#161b22;--card2:#1c2333;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;
+  --gold:#d4a853;--teal:#58c4b0;--green:#6bc46b;--orange:#f0a030;--coral:#e07060;--purple:#8b7cf6;
+}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ─── OPEN-IN-SAFARI BANNER ──────────────────────────────────────── */
+.safari-tip{display:none;background:#1a2540;border-bottom:1px solid var(--border);padding:10px 16px;font-size:12px;color:var(--muted);text-align:center}
+.safari-tip strong{color:var(--gold)}
+@media(max-width:640px){.safari-tip{display:block}}
+
+/* ─── HERO ───────────────────────────────────────────────────────── */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#141c2b 60%,#0d1117 100%);padding:26px 20px 20px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(212,168,83,.07) 0%,transparent 70%);pointer-events:none}
+.hero-title{font-size:clamp(22px,5vw,36px);font-weight:800;color:var(--gold);letter-spacing:-.5px;margin-bottom:4px}
+.hero-sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.hero-pills{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.pill{padding:4px 13px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+
+/* ─── TAB NAV ────────────────────────────────────────────────────── */
+.tabs-nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:500;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;justify-content:center}
+.tabs-nav::-webkit-scrollbar{display:none}
+@media(max-width:580px){.tabs-nav{justify-content:flex-start}}
+.tab-btn{flex-shrink:0;padding:13px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s;-webkit-appearance:none}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ─── SECTION ────────────────────────────────────────────────────── */
+.section{padding:20px 16px;max-width:1080px;margin:0 auto}
+.sec-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+
+/* ─── MAP ────────────────────────────────────────────────────────── */
+#map{height:calc(100vh - 160px);min-height:380px}
+@media(max-width:640px){#map{height:60vh;min-height:300px}}
+.map-wrap{position:relative}
+.map-legend{position:absolute;bottom:16px;right:10px;background:rgba(22,27,34,.94);border:1px solid var(--border);border-radius:10px;padding:10px 12px;z-index:1000;font-size:11px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.leg-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:var(--muted)}
+.leg-row:last-child{margin-bottom:0}
+.leg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.leg-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:9px}
+.tog-lbl{display:flex;align-items:center;gap:8px;cursor:pointer;-webkit-user-select:none;user-select:none;margin-bottom:7px;font-size:11px;color:var(--muted);line-height:1}
+.tog-lbl:last-child{margin-bottom:0}
+.tog-in{display:none}
+.tog-sw{width:30px;height:17px;background:var(--border);border-radius:9px;position:relative;transition:background .2s;flex-shrink:0}
+.tog-in:checked+.tog-sw{background:var(--tc,#d4a853)}
+.tog-sw::after{content:'';position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tog-in:checked+.tog-sw::after{left:15px}
+
+/* ─── AIRBNB GRID ────────────────────────────────────────────────── */
+.ab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:24px}
+.ab-card{background:var(--card);border:2px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s,box-shadow .2s;cursor:pointer}
+.ab-card:hover{border-color:rgba(212,168,83,.4)}
+.ab-card.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 6px 28px rgba(212,168,83,.2)}
+
+/* ─── AIRBNB IMAGE HEADER ────────────────────────────────────────── */
+.ab-img{height:160px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.ab-img-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.ab-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.1) 60%)}
+.ab-img-content{position:relative;z-index:1;padding:12px 16px;width:100%}
+.ab-num{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.6);font-weight:700;margin-bottom:3px}
+.ab-title{font-size:14px;font-weight:700;line-height:1.3;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.ab-price-badge{position:absolute;top:12px;right:12px;z-index:2;background:rgba(0,0,0,.65);border:1px solid rgba(212,168,83,.5);border-radius:8px;padding:5px 10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ab-pp{font-size:17px;font-weight:800;color:var(--gold)}
+.ab-pp-lbl{font-size:10px;color:rgba(255,255,255,.6)}
+
+/* ─── AIRBNB BODY ────────────────────────────────────────────────── */
+.ab-body{padding:14px 16px}
+.ab-stats{display:flex;gap:18px;margin-bottom:11px}
+.ab-stat-v{font-size:16px;font-weight:700}
+.ab-stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.ab-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.tag{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:rgba(255,255,255,.055);color:var(--muted);border:1px solid var(--border)}
+.tag.hi{background:rgba(212,168,83,.12);color:var(--gold);border-color:rgba(212,168,83,.3)}
+.ab-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:11px}
+.ab-loc{font-size:12px;color:var(--muted);margin-bottom:13px}
+.ab-actions{display:flex;gap:8px}
+.btn-p{flex:1;padding:9px 12px;background:var(--gold);color:#0d1117;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;text-align:center;-webkit-appearance:none}
+.btn-p:hover,.btn-p:active{opacity:.85}
+.btn-s{padding:9px 12px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:color .2s,border-color .2s;-webkit-appearance:none}
+.btn-s:hover,.btn-s:active{color:var(--text);border-color:var(--muted)}
+.btn-vote{padding:11px 22px;background:var(--card2);color:var(--muted);border:1px solid var(--border);border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;-webkit-appearance:none;white-space:nowrap}
+.btn-vote.ready{background:var(--gold);color:#0d1117;border-color:var(--gold);box-shadow:0 4px 20px rgba(212,168,83,.25)}
+.btn-vote.ready:hover,.btn-vote.ready:active{opacity:.85}
+.vote-banner{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.vote-banner-text{flex:1;min-width:0}
+.vote-banner-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.vote-banner-sub{font-size:12px;color:var(--muted)}
+/* vote modal */
+.vmodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.vmodal-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px 22px;max-width:420px;width:100%;box-shadow:0 28px 70px rgba(0,0,0,.85)}
+.vmodal-ttl{font-size:22px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.vmodal-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.vmodal-sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:18px;font-size:13px;line-height:1.6}
+.vmodal-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.vmodal-in{width:100%;padding:12px 14px;background:var(--bg);border:2px solid var(--border);border-radius:9px;color:var(--text);font-size:16px;outline:none;margin-bottom:18px;-webkit-appearance:none;display:block;transition:border-color .2s}
+.vmodal-in:focus{border-color:var(--gold)}
+.vmodal-in.err{border-color:var(--coral)!important}
+.vmodal-acts{display:flex;gap:9px}
+.vmodal-hint{font-size:11px;color:var(--muted);margin-top:12px;text-align:center}
+
+/* ─── COST SECTION (inline in Airbnbs tab) ───────────────────────── */
+.cost-box{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:6px}
+.cost-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.cost-head-ttl{font-size:15px;font-weight:700}
+.gas-row{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
+.gas-in{width:62px;padding:5px 7px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;text-align:center;-webkit-appearance:none}
+table.ct{width:100%;border-collapse:collapse}
+table.ct th{padding:8px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+table.ct td{padding:10px 16px;font-size:13px;border-bottom:1px solid rgba(48,54,61,.5)}
+table.ct tr:last-child td{border-bottom:none}
+table.ct .sh td{background:rgba(255,255,255,.02);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:7px 16px;font-weight:600}
+table.ct .tr-tot td{font-weight:700;color:var(--gold);background:rgba(212,168,83,.04);border-top:1px solid var(--border)}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px}
+@media(max-width:520px){.pc-grid{grid-template-columns:1fr}}
+.pc-col{background:rgba(255,255,255,.02);border-radius:10px;padding:14px}
+.pc-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.pc-col.pros .pc-col-title{color:var(--green)}
+.pc-col.cons .pc-col-title{color:var(--coral)}
+.pc-item{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:6px;display:flex;gap:7px;align-items:flex-start}
+.pc-item:last-child{margin-bottom:0}
+.pc-icon{flex-shrink:0;margin-top:1px}
+
+/* ─── RESTAURANTS ────────────────────────────────────────────────── */
+.bracket{margin-bottom:12px}
+.br-head{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s;user-select:none;-webkit-user-select:none}
+.br-head.open{border-radius:10px 10px 0 0;border-bottom-color:transparent}
+.br-head:hover{border-color:rgba(255,255,255,.18)}
+.br-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.br-lbl{font-weight:600;font-size:14px;flex:1}
+.br-ct{font-size:12px;color:var(--muted)}
+.br-chv{color:var(--muted);font-size:11px;transition:transform .2s;flex-shrink:0}
+.br-head.open .br-chv{transform:rotate(180deg)}
+.br-body{display:none;background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+.br-body.open{display:block}
+.rc{padding:14px 16px;border-bottom:1px solid rgba(48,54,61,.45)}
+.rc:last-child{border-bottom:none}
+.rc:hover{background:var(--card2)}
+.rc-name{font-size:15px;font-weight:600;margin-bottom:5px}
+.rc-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.badge{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500}
+.badge-c{background:rgba(255,255,255,.06);color:var(--muted)}
+.badge-b{background:rgba(107,196,107,.14);color:var(--green)}
+.badge-m{background:rgba(240,160,48,.14);color:var(--orange)}
+.badge-u{background:rgba(224,112,96,.14);color:var(--coral)}
+.rc-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:8px}
+.rc-addr{font-size:12px;color:var(--muted);margin-bottom:9px}
+.rc-acts{display:flex;gap:7px;flex-wrap:wrap}
+.bsm{padding:6px 11px;border-radius:6px;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:opacity .2s;border:none;-webkit-appearance:none}
+.bsm:hover,.bsm:active{opacity:.8}
+.bsm-map{background:rgba(212,168,83,.1);color:var(--gold);border:1px solid rgba(212,168,83,.3)}
+.bsm-dir{background:transparent;color:var(--muted);border:1px solid var(--border)}
+
+/* ─── SHOPPING ───────────────────────────────────────────────────── */
+.sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:13px}
+.sh-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;transition:border-color .2s}
+.sh-card:hover{border-color:rgba(88,196,176,.3)}
+.sh-name{font-size:15px;font-weight:600;margin-bottom:3px}
+.sh-cat{font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.sh-addr{font-size:12px;color:var(--muted);line-height:1.4;margin-bottom:8px}
+.sh-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+
+/* ─── GYMS ───────────────────────────────────────────────────────── */
+.gy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.gy-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:border-color .2s}
+.gy-card:hover{border-color:rgba(139,124,246,.3)}
+.gy-badge{display:inline-block;padding:2px 9px;background:rgba(139,124,246,.14);color:var(--purple);border-radius:12px;font-size:11px;font-weight:600;margin-bottom:9px}
+.gy-name{font-size:16px;font-weight:700;margin-bottom:6px}
+.gy-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:9px}
+.gy-addr{font-size:12px;color:var(--muted);margin-bottom:10px}
+
+/* ─── LEAFLET POPUP DARK THEME ───────────────────────────────────── */
+.leaflet-popup-content-wrapper{background:#1c2333!important;border:1px solid #30363d!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.65)!important;color:#e6edf3!important}
+.leaflet-popup-tip{background:#1c2333!important}
+.leaflet-popup-content{margin:12px 14px!important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;font-size:13px!important;min-width:200px}
+.leaflet-popup-close-button{color:#8b949e!important;font-size:18px!important;top:6px!important;right:8px!important}
+.pu-title{font-size:14px;font-weight:700;margin-bottom:4px;color:#e6edf3;line-height:1.3}
+.pu-sub{font-size:12px;color:#8b949e;margin-bottom:5px;line-height:1.4}
+.pu-price{font-size:17px;font-weight:800;color:#d4a853;margin-bottom:8px}
+.pu-a{display:block;padding:7px 10px;border-radius:7px;font-size:12px;font-weight:600;text-align:center;text-decoration:none;margin-top:6px;transition:opacity .2s}
+.pu-a:hover,.pu-a:active{opacity:.85}
+.pu-a-p{background:#d4a853;color:#0d1117}
+.pu-a-s{background:transparent;color:#8b949e;border:1px solid #30363d}
+
+/* ─── PULSE ANIMATION ────────────────────────────────────────────── */
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,168,83,.75)}70%{box-shadow:0 0 0 14px rgba(212,168,83,0)}100%{box-shadow:0 0 0 0 rgba(212,168,83,0)}}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+@media(max-width:600px){
+  .section{padding:14px 12px}
+  .ab-actions{flex-direction:column}
+  table.ct th,table.ct td{padding:8px 12px;font-size:12px}
+  .pc-grid{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body>
+
+<!-- iPhone/Files-app tip (shows only on small screens) -->
+<div class="safari-tip">
+  📱 On iPhone: open this file in <strong>Safari</strong> (not the Files app) for full interactivity.
+  In Mail, tap &amp; hold the attachment → <strong>Open in Safari</strong>.
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-title">🏙️ Dallas Trip</div>
+  <div class="hero-sub">July 24 – 26, 2026 &nbsp;·&nbsp; Norman, OK → Dallas, TX</div>
+  <div class="hero-pills">
+    <span class="pill" style="color:var(--gold)">10 People</span>
+    <span class="pill" style="color:var(--teal)">3 Airbnb Options</span>
+    <span class="pill" style="color:var(--green)">9 Restaurants</span>
+    <span class="pill" style="color:var(--purple)">5 Climbing Gyms</span>
+    <span class="pill" style="color:var(--orange)">7 Shopping Stops</span>
+  </div>
+</header>
+
+<!-- TAB NAV (5 tabs — Cost merged into Airbnbs) -->
+<nav class="tabs-nav">
+  <button class="tab-btn active" data-tab="map"         onclick="showTab('map')">🗺 Map</button>
+  <button class="tab-btn"        data-tab="airbnbs"     onclick="showTab('airbnbs')">🏠 Airbnbs &amp; Cost</button>
+  <button class="tab-btn"        data-tab="restaurants" onclick="showTab('restaurants')">🍽 Restaurants</button>
+  <button class="tab-btn"        data-tab="shopping"    onclick="showTab('shopping')">🛍 Shopping</button>
+  <button class="tab-btn"        data-tab="gyms"        onclick="showTab('gyms')">🧗 Gyms</button>
+</nav>
+
+<!-- MAP -->
+<div class="tab-panel active" id="tab-map">
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="map-legend">
+      <div class="leg-hdr">Layers</div>
+      <label class="tog-lbl" style="--tc:#d4a853"><input class="tog-in" type="checkbox" checked onchange="toggleLayer('airbnbs',this.checked)"><span class="tog-sw"></span><span class="leg-dot" style="background:#d4a853"></span>Airbnb</label>
+      <label class="tog-lbl" style="--tc:#58c4b0"><input class="tog-in" type="checkbox" checked onchange="toggleLayer('shopping',this.checked)"><span class="tog-sw"></span><span class="leg-dot" style="background:#58c4b0"></span>Shopping</label>
+      <label class="tog-lbl" style="--tc:#6bc46b"><input class="tog-in" type="checkbox" checked onchange="toggleLayer('rest_budget',this.checked)"><span class="tog-sw"></span><span class="leg-dot" style="background:#6bc46b"></span>$10–$20 Eats</label>
+      <label class="tog-lbl" style="--tc:#f0a030"><input class="tog-in" type="checkbox" checked onchange="toggleLayer('rest_mid',this.checked)"><span class="tog-sw"></span><span class="leg-dot" style="background:#f0a030"></span>$20–$50 Eats</label>
+      <label class="tog-lbl" style="--tc:#e07060"><input class="tog-in" type="checkbox" checked onchange="toggleLayer('rest_upscale',this.checked)"><span class="tog-sw"></span><span class="leg-dot" style="background:#e07060"></span>$50–$100 Eats</label>
+      <label class="tog-lbl" style="--tc:#8b7cf6"><input class="tog-in" type="checkbox" checked onchange="toggleLayer('gyms',this.checked)"><span class="tog-sw"></span><span class="leg-dot" style="background:#8b7cf6"></span>Climbing Gym</label>
+    </div>
+  </div>
+</div>
+
+<!-- AIRBNBS + COST (merged) -->
+<div class="tab-panel" id="tab-airbnbs">
+  <div class="section">
+    <div class="sec-title">Airbnb Options</div>
+    <div class="sec-sub">July 24–26 · 2 nights · 10 guests — select an option to see the full cost breakdown below</div>
+    <div class="ab-grid" id="ab-grid"></div>
+
+    <!-- Vote Banner -->
+    <div class="vote-banner">
+      <div class="vote-banner-text">
+        <div class="vote-banner-title">Feeling good about your pick?</div>
+        <div class="vote-banner-sub" id="vote-status">Select an Airbnb option above, then submit your vote</div>
+      </div>
+      <button id="vote-btn" class="btn-vote" onclick="openVoteModal()">🗳 Submit Vote</button>
+    </div>
+
+    <!-- Inline Cost Section -->
+    <div class="sec-title" style="margin-top:8px">Cost Breakdown</div>
+    <div class="sec-sub" style="margin-bottom:12px">Per-person total: lodging + gas. Tap an option above to populate.</div>
+    <div class="cost-box">
+      <div class="cost-head">
+        <div class="cost-head-ttl" id="cost-ttl">← Select an Airbnb option above</div>
+        <div class="gas-row">
+          <span>Gas:</span><span>$</span>
+          <input class="gas-in" id="gas-in" type="number" value="3.51" step="0.05" min="1.5" max="9" oninput="renderCost()">
+          <span>/gal</span>
+        </div>
+      </div>
+      <div id="cost-body">
+        <div style="padding:36px 20px;text-align:center;color:var(--muted);font-size:14px">Select an Airbnb above to see full breakdown</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESTAURANTS -->
+<div class="tab-panel" id="tab-restaurants">
+  <div class="section">
+    <div class="sec-title">Restaurants</div>
+    <div class="sec-sub">Top 3 in each price bracket — tap to expand</div>
+    <div id="rest-list"></div>
+  </div>
+</div>
+
+<!-- SHOPPING -->
+<div class="tab-panel" id="tab-shopping">
+  <div class="section">
+    <div class="sec-title">Shopping</div>
+    <div class="sec-sub">7 stops across Dallas &amp; Richardson</div>
+    <div class="sh-grid" id="sh-grid"></div>
+  </div>
+</div>
+
+<!-- GYMS -->
+<div class="tab-panel" id="tab-gyms">
+  <div class="section">
+    <div class="sec-title">Climbing Gyms</div>
+    <div class="sec-sub">Top-rated gyms in Dallas – Fort Worth</div>
+    <div class="gy-grid" id="gy-grid"></div>
+  </div>
+</div>
+
+<!-- Vote Modal -->
+<div class="vmodal" id="vote-modal" onclick="closeVoteModal(event)">
+  <div class="vmodal-card" onclick="event.stopPropagation()">
+    <div class="vmodal-ttl">🗳 Cast Your Vote</div>
+    <div class="vmodal-sub">Your vote will be sent to the trip organizer via email.</div>
+    <div class="vmodal-sel" id="vote-sel-box"></div>
+    <div class="vmodal-lbl">Your Name</div>
+    <input class="vmodal-in" id="vote-name-in" type="text" placeholder="e.g. Alex Johnson"
+      autocomplete="name" autocorrect="off" spellcheck="false"
+      oninput="this.classList.remove('err')"
+      onkeydown="if(event.key==='Enter')submitVote()">
+    <div class="vmodal-acts">
+      <button class="btn-p" style="flex:1;font-size:14px;padding:12px" onclick="submitVote()">✉ Send Vote</button>
+      <button class="btn-s" style="padding:12px 18px" onclick="closeVoteModal(null)">Cancel</button>
+    </div>
+    <div class="vmodal-hint">Opens your email app with a pre-filled message — just tap Send</div>
+  </div>
+</div>
+
+<script>
+/*LEAFLET_JS*/
+</script>
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────────
+
+const MEMBERS = 10;
+const DIST_OW = 215; // Norman OK → Dallas TX, one-way miles
+
+// Gradient backgrounds for each Airbnb card (no hotlinked images = works offline)
+const AB_GRADIENTS = {
+  a1: 'linear-gradient(135deg,#1a1228 0%,#2e1f0e 40%,#1a180a 100%)',   // contemporary gold/warm
+  a2: 'linear-gradient(135deg,#0a1f14 0%,#0f2e1a 40%,#0d1f18 100%)',   // modern tropical green
+  a3: 'linear-gradient(135deg,#0a1628 0%,#0d2445 40%,#091530 100%)',   // pool oasis deep blue
+};
+
+const AIRBNBS = [
+  {
+    id:'a1', num:'Option 1',
+    title:'Design Magazine Ft Contemp 4BR Western Dallas Home',
+    price:1160, beds:4, baths:3, sqft:null,
+    location:'Bishop Arts District, Dallas TX',
+    lat:32.7476, lng:-96.8311,
+    tags:['4 Bedrooms','Contemporary','Magazine-Featured','Near Downtown','Bishop Arts'],
+    highlights:['Design Magazine Featured','5 min to Downtown','Bishop Arts walkable','Contemporary Western style'],
+    desc:'A professionally designed contemporary Western home featured in Design Magazine. Located in the trendy Bishop Arts District — just 5 minutes from downtown with walkable access to restaurants and bars.',
+    pros:['Best location — walk to Bishop Arts bars & restaurants','Design-forward interior, great for content & photos','Closest to downtown Dallas & Deep Ellum nightlife','4 full bedrooms'],
+    cons:['No pool or hot tub — tough in July Texas heat','No listed outdoor entertainment','Fewer beds per person vs. Options 2 & 3'],
+    url:'https://www.airbnb.com/rooms/39370647?check_in=2026-07-24&check_out=2026-07-26',
+  },
+  {
+    id:'a2', num:'Option 2',
+    title:'Modern Tropical 5 BR/8BEDS Home in Dallas w/ Yard',
+    price:1092, beds:5, baths:3.5, sqft:2877,
+    location:'South Dallas / N Oak Cliff, near Bishop Arts',
+    lat:32.7450, lng:-96.8290,
+    tags:['5 Bedrooms','8 Beds','Game Room','Yard','Garage','Lowest Cost'],
+    highlights:['Ping pong game room','75" Smart TV','Spacious backyard','Electric fireplace','2-car garage','Near Dallas Zoo'],
+    desc:'Modern tropical 5-bedroom home with 8 beds and 3.5 baths across 2,877 sq ft. Upstairs game room with ping pong, 75" smart TV, spacious backyard, and minutes from Bishop Arts District and the Dallas Zoo.',
+    pros:['Most beds (8) — everyone sleeps comfortably','Lowest cost: $109.20/person','Game room + 75" TV for group hangouts','Spacious backyard patio','Near Dallas Zoo & Bishop Arts'],
+    cons:['No pool or hot tub','South Dallas — slightly farther from North Dallas stops','Yard entertainment less vs. Option 3'],
+    url:'https://www.airbnb.com/rooms/750594075849936083?check_in=2026-07-24&check_out=2026-07-26',
+  },
+  {
+    id:'a3', num:'Option 3',
+    title:'Oasis Pool, Hot Tub, Games; Sleeps 14; Near Dallas',
+    price:1661, beds:4, baths:2, sqft:2110,
+    location:'Richardson Heights, Richardson TX',
+    lat:32.9485, lng:-96.7360,
+    tags:['Pool','Hot Tub','4 Arcades','BBQ Grill','Sleeps 14','Shuffleboard'],
+    highlights:['Backyard pool + hot tub','4 arcade games + foosball + air hockey + shuffleboard','BBQ grill + outdoor dining','55" TV + dining for 9','Gourmet kitchen'],
+    desc:'A full vacation oasis in Richardson with pool, hot tub, and an epic game room — 4 arcades, foosball, shuffleboard, air hockey, BBQ grill. Sleeps up to 14 comfortably.',
+    pros:['Only option with pool + hot tub — essential for July in Texas','Best entertainment (4 arcades + foosball + shuffleboard)','Sleeps 14 — no one cramped','BBQ for group cookouts'],
+    cons:['Most expensive: $166.10/person','Richardson location is farther from downtown Dallas','2 bathrooms for 10+ people'],
+    url:'https://www.airbnb.com/rooms/1042033181648081031?check_in=2026-07-24&check_out=2026-07-26',
+  },
+];
+
+const CARS = [
+  {name:'Toyota Sienna Hybrid (2025)', mpg:36},
+  {name:'Nissan Rogue (2020)',          mpg:27},
+  {name:'Unknown Gas Car',             mpg:28},
+];
+
+const RESTAURANTS = [
+  {
+    bracket:'budget', label:'$10 – $20', color:'#6bc46b', badgeCls:'badge-b',
+    items:[
+      {id:'r1',name:'Resident Taqueria',cuisine:'Mexican / Tacos',price:'$13–15',
+       desc:'Chef-driven taqueria with fresh made-to-order tortillas and slow-braised meats. Casual, high-quality tacos.',
+       addr:'9661 Audelia Rd #112, Dallas TX 75238',lat:32.8784,lng:-96.7188,
+       maps:'https://maps.google.com/?q=9661+Audelia+Rd+Dallas+TX',
+       url:'https://www.google.com/search?q=Resident+Taqueria+Dallas+TX'},
+      {id:'r2',name:'Cane Rosso',cuisine:'Italian / Neapolitan Pizza',price:'$10–15',
+       desc:'Authentic Neapolitan pizza in Deep Ellum. $10 margherita pies during happy hour, wood-fired crust.',
+       addr:'2612 Commerce St, Dallas TX 75226',lat:32.7825,lng:-96.7855,
+       maps:'https://maps.google.com/?q=2612+Commerce+St+Dallas+TX',
+       url:'https://www.google.com/search?q=Cane+Rosso+Deep+Ellum+Dallas'},
+      {id:'r3',name:'Roots Chicken Shak',cuisine:'Southern Fried Chicken',price:'$12–15',
+       desc:"Chef Tiffany Derry's duck-fat fried chicken at Legacy Hall. Crispy tenders combo with fries ~$12.",
+       addr:'7800 Windrose Ave, Plano TX 75024',lat:33.0778,lng:-96.8285,
+       maps:'https://maps.google.com/?q=7800+Windrose+Ave+Plano+TX',
+       url:'https://www.google.com/search?q=Roots+Chicken+Shak+Legacy+Hall+Plano+TX'},
+    ]
+  },
+  {
+    bracket:'mid', label:'$20 – $50', color:'#f0a030', badgeCls:'badge-m',
+    items:[
+      {id:'r4',name:'Pecan Lodge',cuisine:'Texas BBQ',price:'$20–35',
+       desc:"Dallas's iconic BBQ joint in Deep Ellum. Fatty brisket, jalapeño cheese sausage, classic sides.",
+       addr:'2702 Main St, Dallas TX 75226',lat:32.7837,lng:-96.7860,
+       maps:'https://maps.google.com/?q=2702+Main+St+Dallas+TX',
+       url:'https://www.google.com/search?q=Pecan+Lodge+Deep+Ellum+Dallas+TX'},
+      {id:'r5',name:'Via Triozzi',cuisine:'Italian',price:'$25–45',
+       desc:'Lower Greenville trattoria with handmade pasta and legendary 20-layer lasagna. Seasonal menu.',
+       addr:'1806 Greenville Ave, Dallas TX 75206',lat:32.8244,lng:-96.7771,
+       maps:'https://maps.google.com/?q=1806+Greenville+Ave+Dallas+TX',
+       url:'https://www.google.com/search?q=Via+Triozzi+Greenville+Ave+Dallas+TX'},
+      {id:'r6',name:'Pesca Coastal Classics',cuisine:'Coastal Mexican / Seafood',price:'$25–40',
+       desc:'Coastal Mexican in Trinity Groves with aguachiles, ceviches, and seafood boils. Great atmosphere.',
+       addr:'Trinity Groves, West Dallas TX',lat:32.7600,lng:-96.8300,
+       maps:'https://maps.google.com/?q=Trinity+Groves+Dallas+TX',
+       url:'https://www.google.com/search?q=Pesca+Coastal+Classics+Trinity+Groves+Dallas'},
+    ]
+  },
+  {
+    bracket:'upscale', label:'$50 – $100', color:'#e07060', badgeCls:'badge-u',
+    items:[
+      {id:'r7',name:'Georgie',cuisine:'New American',price:'$75–100',
+       desc:'Michelin-recognized restaurant. French Laundry-trained chef, seasonal Texas ingredients, stunning space.',
+       addr:'4514 Travis St #132, Dallas TX 75205',lat:32.8547,lng:-96.8089,
+       maps:'https://maps.google.com/?q=4514+Travis+St+Dallas+TX',
+       url:'https://www.google.com/search?q=Georgie+Restaurant+Travis+St+Dallas+TX'},
+      {id:'r8',name:'Carbone Vino',cuisine:'Upscale Italian',price:'$50–80',
+       desc:"Mario Carbone's upscale Italian in the Design District. Handmade pasta, grand salumi, impressive wine.",
+       addr:'1617 Hi Line Dr, Dallas TX 75207',lat:32.8032,lng:-96.8127,
+       maps:'https://maps.google.com/?q=1617+Hi+Line+Dr+Dallas+TX',
+       url:'https://www.google.com/search?q=Carbone+Vino+Design+District+Dallas+TX'},
+      {id:'r9',name:'Sanjh Restaurant & Bar',cuisine:'Modern Indian Fine Dining',price:'$60–90',
+       desc:'Upscale Indian fine dining in Las Colinas overlooking the water. Michelin-pedigree cooking.',
+       addr:'5250 N O\'Connor Blvd #146, Irving TX 75039',lat:32.8698,lng:-96.9468,
+       maps:'https://maps.google.com/?q=5250+N+OConnor+Blvd+Irving+TX',
+       url:'https://www.google.com/search?q=Sanjh+Restaurant+Bar+Irving+TX'},
+    ]
+  },
+];
+
+const SHOPPING = [
+  {id:'s1',name:'Micro Center',cat:'Tech & Electronics',addr:'13929 N Central Expy, Dallas TX 75243',
+   desc:'Massive computer & electronics store — CPUs, GPUs, peripherals. Best tech selection in DFW.',
+   lat:32.9095,lng:-96.7370,maps:'https://maps.google.com/?q=13929+N+Central+Expy+Dallas+TX',url:'https://www.microcenter.com/site/stores/dallas.aspx'},
+  {id:'s2',name:'IKEA University Park',cat:'Furniture & Home',addr:'8080 Park Ln, Dallas TX 75231',
+   desc:"Dallas's newest IKEA (opened 2026) at The Shops at Park Lane, across from NorthPark Center.",
+   lat:32.8681,lng:-96.7599,maps:'https://maps.google.com/?q=8080+Park+Ln+Dallas+TX',url:'https://www.ikea.com/us/en/stores/university-park/'},
+  {id:'s3',name:'Louis Vuitton — NorthPark',cat:'Luxury Fashion',addr:'400 NorthPark Ctr, Dallas TX 75225',
+   desc:'Full LV collection — leather goods, RTW, accessories — inside upscale NorthPark Center.',
+   lat:32.8690,lng:-96.7748,maps:'https://maps.google.com/?q=Louis+Vuitton+NorthPark+Dallas',url:'https://us.louisvuitton.com/eng-us/stores/usa/dallas--northpark'},
+  {id:'s4',name:'The Scent Room',cat:'Fragrance',addr:'3699 McKinney Ave #301, Dallas TX 75204',
+   desc:'Elevated perfumery in West Village specializing in fine and niche fragrances.',
+   lat:32.8088,lng:-96.8014,maps:'https://maps.google.com/?q=3699+McKinney+Ave+Dallas+TX',url:'https://www.thescentroom.com/'},
+  {id:'s5',name:'NorthPark Center',cat:'Mall',addr:'8687 N Central Expy, Dallas TX 75225',
+   desc:'Upscale mall with Apple, Nike, 200+ retailers, and world-class art installations.',
+   lat:32.8686,lng:-96.7740,maps:'https://maps.google.com/?q=NorthPark+Center+Dallas+TX',url:'https://northparkcenter.com/'},
+  {id:'s6',name:'The Galleria Dallas',cat:'Mall',addr:'13350 Dallas Pkwy, Dallas TX 75240',
+   desc:'Three-level luxury mall 12 miles north of downtown with premium retailers and dining.',
+   lat:32.9297,lng:-96.8199,maps:'https://maps.google.com/?q=13350+Dallas+Pkwy+Dallas+TX',url:'https://galleriadallas.com/'},
+  {id:'s7',name:'Amir Oud — House of Royal Fragrance',cat:'Fragrance',addr:'1411 E Campbell Rd #1900, Richardson TX 75081',
+   desc:'Boutique specializing in premium oud fragrances with an in-store Scent Bar for personalized sessions.',
+   lat:32.9664,lng:-96.7283,maps:'https://maps.google.com/?q=1411+E+Campbell+Rd+Richardson+TX',url:'https://amiroud.com/'},
+];
+
+const GYMS = [
+  {id:'g1',name:'Movement Design District',badge:'Movement ★ 4.6',addr:'141 Glass St, Dallas TX 75207',
+   desc:"DFW's largest gym at 45,000 sq ft with 56-ft walls. Bouldering, lead, top rope, yoga, sauna.",
+   lat:32.7899,lng:-96.8231,maps:'https://maps.google.com/?q=141+Glass+St+Dallas+TX',url:'https://movementgyms.com/design-district/'},
+  {id:'g2',name:'Movement The Hill',badge:'Movement ★ 4.6',addr:'8021 Walnut Hill Ln, Dallas TX 75231',
+   desc:'Bouldering-focused Movement location in North Dallas. Member access shared across all Movement locations.',
+   lat:32.8813,lng:-96.7686,maps:'https://maps.google.com/?q=8021+Walnut+Hill+Ln+Dallas+TX',url:'https://movementgyms.com/the-hill/'},
+  {id:'g3',name:'Bouldering Project Dallas',badge:'Top Rated ★ 4.7',addr:'1330 Conant St, Dallas TX 75207',
+   desc:'35,000 sq ft Design District facility. 8,500 sq ft bouldering, fitness center, yoga studio, saunas.',
+   lat:32.7950,lng:-96.8200,maps:'https://maps.google.com/?q=1330+Conant+St+Dallas+TX',url:'https://boulderingproject.com/location/design-district/'},
+  {id:'g4',name:'Movement Fort Worth',badge:'Movement ★ 4.5',addr:'2828 W Lancaster Ave, Fort Worth TX 76107',
+   desc:'Full-service Movement gym ~45 min west. Bouldering, lead, top rope, yoga — same network as Design District.',
+   lat:32.7305,lng:-97.3580,maps:'https://maps.google.com/?q=2828+W+Lancaster+Ave+Fort+Worth+TX',url:'https://movementgyms.com/fort-worth/'},
+  {id:'g5',name:'N. Texas Outdoor Pursuit Center',badge:'Unique ★ 4.4',addr:'Downtown Carrollton, TX (Historic Grain Silos)',
+   desc:'Outdoor climbing inside historic grain silos — 120-foot natural wall heights. A one-of-a-kind Texas experience.',
+   lat:32.9766,lng:-96.8900,maps:'https://maps.google.com/?q=North+Texas+Outdoor+Pursuit+Center+Carrollton+TX',url:'https://maps.google.com/?q=North+Texas+Outdoor+Pursuit+Center'},
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────────
+let map = null, selectedAb = null;
+const markers = {};
+const layers  = {};
+
+// ─── BOOT ───────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  renderAirbnbs();
+  renderRestaurants();
+  renderShopping();
+  renderGyms();
+  try { initMap(); } catch(e) { console.warn('Map init error:', e); }
+});
+
+// ─── TABS ────────────────────────────────────────────────────────────────────────
+function showTab(id) {
+  var panels = document.querySelectorAll('.tab-panel');
+  var btns   = document.querySelectorAll('.tab-btn');
+  for (var i=0; i<panels.length; i++) panels[i].classList.remove('active');
+  for (var i=0; i<btns.length; i++)   btns[i].classList.remove('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  var active = document.querySelector('.tab-btn[data-tab="' + id + '"]');
+  if (active) active.classList.add('active');
+  if (id === 'map' && map) { setTimeout(function(){ map.invalidateSize(); }, 60); }
+}
+
+// ─── MAP ─────────────────────────────────────────────────────────────────────────
+function pinIcon(emoji, color, sz) {
+  sz = sz || 32;
+  var html = '<div style="width:'+sz+'px;height:'+sz+'px;background:'+color+';border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid rgba(255,255,255,.8);box-shadow:0 3px 12px rgba(0,0,0,.6);font-size:'+Math.round(sz*.42)+'px;cursor:pointer">'+emoji+'</div>';
+  return L.divIcon({html:html, className:'', iconSize:[sz,sz], iconAnchor:[sz/2,sz/2], popupAnchor:[0,-(sz/2+5)]});
+}
+
+function initMap() {
+  map = L.map('map', {tap:true}).setView([32.83, -96.82], 11);
+
+  // CartoDB Voyager — colorful map with blue water & green parks, no referer restriction
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Layer groups — one per category for legend toggle filtering
+  ['airbnbs','shopping','rest_budget','rest_mid','rest_upscale','gyms'].forEach(function(k){
+    layers[k] = L.layerGroup().addTo(map);
+  });
+
+  // Airbnb pins
+  AIRBNBS.forEach(function(a) {
+    var m = L.marker([a.lat,a.lng], {icon:pinIcon('🏠','#d4a853',38), zIndexOffset:1000}).addTo(layers.airbnbs);
+    m.bindPopup(
+      '<div class="pu-title">'+a.num+'</div>'+
+      '<div class="pu-sub" style="font-size:13px;font-weight:600;color:#c8d3df;margin-bottom:2px">'+a.title+'</div>'+
+      '<div class="pu-sub">📍 '+a.location+'</div>'+
+      '<div class="pu-sub">🛏 '+a.beds+' BR &nbsp;·&nbsp; 🚿 '+a.baths+' BA'+(a.sqft?' &nbsp;·&nbsp; '+a.sqft.toLocaleString()+' sqft':'')+'</div>'+
+      '<div class="pu-price">$'+(a.price/MEMBERS).toFixed(2)+'<span style="font-size:13px;color:#8b949e;font-weight:400">/person</span></div>'+
+      '<div style="font-size:11px;color:#8b949e;margin-bottom:8px">'+a.highlights.slice(0,3).map(function(h){return '✓ '+h;}).join('<br>')+'</div>'+
+      '<a href="'+a.url+'" target="_blank" class="pu-a pu-a-p">View on Airbnb ↗</a>'+
+      '<a href="#" onclick="selectAb(\''+a.id+'\');showTab(\'airbnbs\');return false" class="pu-a pu-a-s">See Cost Analysis</a>',
+    {maxWidth:260});
+    markers[a.id] = m;
+  });
+
+  // Shopping pins
+  SHOPPING.forEach(function(s) {
+    var m = L.marker([s.lat,s.lng], {icon:pinIcon('🛍','#58c4b0',28)}).addTo(layers.shopping);
+    m.bindPopup(
+      '<div class="pu-title">'+s.name+'</div>'+
+      '<div class="pu-sub" style="color:#58c4b0;font-size:11px">'+s.cat+'</div>'+
+      '<div class="pu-sub">'+s.desc+'</div>'+
+      '<div class="pu-sub">📍 '+s.addr+'</div>'+
+      '<a href="'+s.maps+'" target="_blank" class="pu-a" style="background:#58c4b0;color:#0d1117">Get Directions ↗</a>'+
+      '<a href="'+s.url+'" target="_blank" class="pu-a pu-a-s">Visit Website</a>',
+    {maxWidth:240});
+    markers[s.id] = m;
+  });
+
+  // Restaurant pins
+  RESTAURANTS.forEach(function(br) {
+    var emoji = br.bracket==='budget'?'🍴':br.bracket==='mid'?'🍖':'🍷';
+    br.items.forEach(function(r) {
+      var m = L.marker([r.lat,r.lng], {icon:pinIcon(emoji,br.color,26)}).addTo(layers['rest_'+br.bracket]);
+      m.bindPopup(
+        '<div class="pu-title">'+r.name+'</div>'+
+        '<div class="pu-sub" style="color:'+br.color+';font-size:11px">'+r.cuisine+' · '+br.label+'/person</div>'+
+        '<div class="pu-sub">'+r.desc+'</div>'+
+        '<div class="pu-sub">📍 '+r.addr+'</div>'+
+        '<a href="'+r.maps+'" target="_blank" class="pu-a" style="background:'+br.color+';color:#0d1117">Get Directions ↗</a>'+
+        '<a href="'+r.url+'" target="_blank" class="pu-a pu-a-s">View on Google ↗</a>',
+      {maxWidth:240});
+      markers[r.id] = m;
+    });
+  });
+
+  // Gym pins
+  GYMS.forEach(function(g) {
+    var m = L.marker([g.lat,g.lng], {icon:pinIcon('🧗','#8b7cf6',28)}).addTo(layers.gyms);
+    m.bindPopup(
+      '<div class="pu-title">'+g.name+'</div>'+
+      '<div class="pu-sub" style="color:#8b7cf6;font-size:11px">'+g.badge+'</div>'+
+      '<div class="pu-sub">'+g.desc+'</div>'+
+      '<div class="pu-sub">📍 '+g.addr+'</div>'+
+      '<a href="'+g.maps+'" target="_blank" class="pu-a" style="background:#8b7cf6;color:#fff">Get Directions ↗</a>'+
+      '<a href="'+g.url+'" target="_blank" class="pu-a pu-a-s">Visit Website</a>',
+    {maxWidth:240});
+    markers[g.id] = m;
+  });
+}
+
+// ─── VOTING ───────────────────────────────────────────────────────────────────
+function openVoteModal() {
+  if (!selectedAb) {
+    var btn = document.getElementById('vote-btn');
+    if (btn) { btn.style.animation='none'; void btn.offsetWidth; btn.style.animation='pulse .6s ease-in-out 2'; }
+    return;
+  }
+  var a = AIRBNBS.filter(function(x){ return x.id===selectedAb; })[0];
+  document.getElementById('vote-sel-box').innerHTML =
+    '<div style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold);font-weight:700;margin-bottom:4px">'+a.num+'</div>'+
+    '<div style="font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3">'+a.title+'</div>'+
+    '<div style="color:var(--muted);font-size:12px">📍 '+a.location+'</div>'+
+    '<div style="color:var(--gold);font-size:15px;font-weight:800;margin-top:6px">$'+(a.price/MEMBERS).toFixed(2)+'<span style="font-size:12px;color:var(--muted);font-weight:400"> / person</span></div>';
+  var inp = document.getElementById('vote-name-in');
+  inp.value = '';
+  inp.classList.remove('err');
+  var modal = document.getElementById('vote-modal');
+  modal.style.display = 'flex';
+  setTimeout(function(){ inp.focus(); }, 120);
+}
+
+function closeVoteModal(e) {
+  if (!e || e.target === document.getElementById('vote-modal')) {
+    document.getElementById('vote-modal').style.display = 'none';
+  }
+}
+
+function submitVote() {
+  var inp  = document.getElementById('vote-name-in');
+  var name = (inp.value || '').trim();
+  if (!name) { inp.classList.add('err'); inp.focus(); return; }
+  var a = AIRBNBS.filter(function(x){ return x.id===selectedAb; })[0];
+  var subject = name.toUpperCase() + ' HAS VOTED ON AN AIRBNB!!!';
+  var body =
+    name + ' has cast their vote for the Dallas Trip!\n\n' +
+    '=============================\n' +
+    'SELECTED AIRBNB\n' +
+    '=============================\n' +
+    a.num + ': ' + a.title + '\n' +
+    'Location: ' + a.location + '\n' +
+    'Cost per person: $' + (a.price / MEMBERS).toFixed(2) + '\n' +
+    'Total for 2 nights: $' + a.price.toLocaleString() + '\n' +
+    'Airbnb Link: ' + a.url + '\n\n' +
+    '— Sent from the Dallas Trip Planner';
+  window.location.href = 'mailto:nhieudy@gmail.com' +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body='    + encodeURIComponent(body);
+  setTimeout(function(){ document.getElementById('vote-modal').style.display = 'none'; }, 500);
+}
+
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeVoteModal(null); });
+
+function toggleLayer(key, visible) {
+  if (!map || !layers[key]) return;
+  if (visible) { map.addLayer(layers[key]); }
+  else          { map.removeLayer(layers[key]); }
+}
+
+function flyTo(lat, lng, id) {
+  showTab('map');
+  setTimeout(function() {
+    if (!map) return;
+    map.flyTo([lat, lng], 16, {duration:1.1});
+    if (markers[id]) { setTimeout(function(){ markers[id].openPopup(); }, 1300); }
+  }, 80);
+}
+
+// ─── AIRBNBS ──────────────────────────────────────────────────────────────────────
+function renderAirbnbs() {
+  var html = '';
+  AIRBNBS.forEach(function(a) {
+    var isSelected = selectedAb === a.id;
+    html +=
+      '<div class="ab-card'+(isSelected?' selected':'')+'" id="card-'+a.id+'">' +
+        '<div class="ab-img">' +
+          '<div class="ab-img-bg" style="background:'+AB_GRADIENTS[a.id]+'"></div>' +
+          '<div class="ab-img-overlay"></div>' +
+          '<div class="ab-price-badge">' +
+            '<div class="ab-pp">$'+(a.price/MEMBERS).toFixed(2)+'</div>' +
+            '<div class="ab-pp-lbl">/ person</div>' +
+          '</div>' +
+          '<div class="ab-img-content">' +
+            '<div class="ab-num">'+a.num+'</div>' +
+            '<div class="ab-title">'+a.title+'</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ab-body">' +
+          '<div class="ab-stats">' +
+            '<div><div class="ab-stat-v">'+a.beds+'</div><div class="ab-stat-l">Bedrooms</div></div>' +
+            '<div><div class="ab-stat-v">'+a.baths+'</div><div class="ab-stat-l">Baths</div></div>' +
+            (a.sqft ? '<div><div class="ab-stat-v">'+a.sqft.toLocaleString()+'</div><div class="ab-stat-l">Sq Ft</div></div>' : '') +
+            '<div><div class="ab-stat-v">$'+(a.price/1000).toFixed(1)+'k</div><div class="ab-stat-l">Total</div></div>' +
+          '</div>' +
+          '<div class="ab-tags">'+a.tags.map(function(t){return '<span class="tag '+(a.highlights.some(function(h){return h.toLowerCase().includes(t.toLowerCase());})?'hi':'')+'">' + t + '</span>';}).join('')+'</div>' +
+          '<p class="ab-desc">'+a.desc+'</p>' +
+          '<div class="ab-loc">📍 '+a.location+'</div>' +
+          '<div class="ab-actions">' +
+            '<button class="btn-p" onclick="selectAb(\''+a.id+'\')">'+(isSelected ? '✓ Selected' : 'Select & See Cost')+'</button>' +
+            '<a class="btn-s" href="'+a.url+'" target="_blank">Airbnb ↗</a>' +
+            '<button class="btn-s" onclick="flyTo('+a.lat+','+a.lng+',\''+a.id+'\')">Map</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+  document.getElementById('ab-grid').innerHTML = html;
+}
+
+function selectAb(id) {
+  selectedAb = id;
+  renderAirbnbs();
+  renderCost();
+  // Activate vote button
+  var a   = AIRBNBS.filter(function(x){ return x.id===id; })[0];
+  var btn = document.getElementById('vote-btn');
+  var sta = document.getElementById('vote-status');
+  if (btn) btn.classList.add('ready');
+  if (sta) sta.textContent = 'Selected: ' + a.num + ' — ' + (a.title.length>44 ? a.title.slice(0,44)+'…' : a.title);
+  // Scroll to cost section
+  var costBox = document.querySelector('.cost-box');
+  if (costBox) { setTimeout(function(){ costBox.scrollIntoView({behavior:'smooth', block:'start'}); }, 100); }
+  // Pulse pin on map
+  if (map && markers[id]) {
+    var el = markers[id].getElement();
+    if (el) {
+      var d = el.querySelector('div');
+      if (d) { d.style.animation='none'; void d.offsetWidth; d.style.animation='pulse 1.2s ease-in-out 3'; }
+    }
+  }
+}
+
+// ─── COST ─────────────────────────────────────────────────────────────────────────
+function renderCost() {
+  var gas = parseFloat(document.getElementById('gas-in').value) || 3.51;
+  var rt  = DIST_OW * 2; // round trip miles
+
+  if (!selectedAb) {
+    document.getElementById('cost-ttl').textContent = '← Select an Airbnb option above';
+    document.getElementById('cost-body').innerHTML = '<div style="padding:36px 20px;text-align:center;color:var(--muted);font-size:14px">Select an Airbnb above to see full breakdown</div>';
+    return;
+  }
+
+  var a = AIRBNBS.filter(function(x){ return x.id === selectedAb; })[0];
+  var lodgePP = a.price / MEMBERS;
+
+  var carRows = CARS.map(function(c) {
+    var gal  = rt / c.mpg;
+    var cost = gal * gas;
+    return {name:c.name, mpg:c.mpg, gal:gal, cost:cost, pp:cost/MEMBERS};
+  });
+  var gasTotal = carRows.reduce(function(s,c){ return s+c.cost; }, 0);
+  var gasPP    = gasTotal / MEMBERS;
+  var grand    = lodgePP + gasPP;
+
+  var title = a.num + ': ' + (a.title.length > 45 ? a.title.slice(0,45) + '…' : a.title);
+  document.getElementById('cost-ttl').textContent = title;
+
+  var rows = carRows.map(function(c) {
+    return '<tr><td>'+c.name+' <span style="color:var(--muted);font-size:11px">'+c.mpg+' mpg · '+c.gal.toFixed(1)+' gal</span></td><td style="text-align:right">$'+c.cost.toFixed(2)+'</td><td style="text-align:right">$'+c.pp.toFixed(2)+'</td></tr>';
+  }).join('');
+
+  var prosHtml = a.pros.map(function(p){ return '<div class="pc-item"><span class="pc-icon" style="color:var(--green)">✓</span>'+p+'</div>'; }).join('');
+  var consHtml = a.cons.map(function(c){ return '<div class="pc-item"><span class="pc-icon" style="color:var(--coral)">✗</span>'+c+'</div>'; }).join('');
+
+  document.getElementById('cost-body').innerHTML =
+    '<table class="ct">' +
+      '<thead><tr><th>Item</th><th style="text-align:right">Total</th><th style="text-align:right">Per Person</th></tr></thead>' +
+      '<tbody>' +
+        '<tr class="sh"><td colspan="3">🏠 Lodging — 2 nights, '+MEMBERS+' guests</td></tr>' +
+        '<tr><td>'+a.title+'</td><td style="text-align:right">$'+a.price.toLocaleString()+'</td><td style="text-align:right;color:var(--gold)">$'+lodgePP.toFixed(2)+'</td></tr>' +
+        '<tr class="sh"><td colspan="3">🚗 Gas — Norman OK → Dallas TX ('+rt+' mi round trip @ $'+gas.toFixed(2)+'/gal)</td></tr>' +
+        rows +
+        '<tr><td><strong>Gas Subtotal</strong></td><td style="text-align:right"><strong>$'+gasTotal.toFixed(2)+'</strong></td><td style="text-align:right"><strong>$'+gasPP.toFixed(2)+'</strong></td></tr>' +
+        '<tr class="tr-tot"><td>💰 Grand Total Per Person</td><td style="text-align:right">—</td><td style="text-align:right;font-size:19px">$'+grand.toFixed(2)+'</td></tr>' +
+      '</tbody>' +
+    '</table>' +
+    '<div class="pc-grid">' +
+      '<div class="pc-col pros"><div class="pc-col-title">✓ Pros</div>'+prosHtml+'</div>' +
+      '<div class="pc-col cons"><div class="pc-col-title">✗ Cons</div>'+consHtml+'</div>' +
+    '</div>' +
+    '<div style="padding:10px 16px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)">* Gas assumes '+MEMBERS+' people across 3 cars, equal split. Restaurants, activities &amp; shopping not included.</div>';
+}
+
+// ─── RESTAURANTS ──────────────────────────────────────────────────────────────────
+function renderRestaurants() {
+  var html = '';
+  RESTAURANTS.forEach(function(br, i) {
+    html += '<div class="bracket">' +
+      '<div class="br-head'+(i===0?' open':'')+'" onclick="toggleBr(this)">' +
+        '<div class="br-dot" style="background:'+br.color+'"></div>' +
+        '<div class="br-lbl" style="color:'+br.color+'">'+br.label+' per person</div>' +
+        '<div class="br-ct">3 restaurants</div>' +
+        '<div class="br-chv">▼</div>' +
+      '</div>' +
+      '<div class="br-body'+(i===0?' open':'')+'">';
+    br.items.forEach(function(r) {
+      html +=
+        '<div class="rc">' +
+          '<div class="rc-name">'+r.name+'</div>' +
+          '<div class="rc-badges"><span class="badge badge-c">'+r.cuisine+'</span><span class="badge '+br.badgeCls+'">'+r.price+'</span></div>' +
+          '<div class="rc-desc">'+r.desc+'</div>' +
+          '<div class="rc-addr">📍 '+r.addr+'</div>' +
+          '<div class="rc-acts">' +
+            '<button class="bsm bsm-map" onclick="flyTo('+r.lat+','+r.lng+',\''+r.id+'\')">📍 Map</button>' +
+            '<a class="bsm bsm-dir" href="'+r.maps+'" target="_blank">Directions ↗</a>' +
+            '<a class="bsm bsm-dir" href="'+r.url+'" target="_blank">Google ↗</a>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('rest-list').innerHTML = html;
+}
+
+function toggleBr(h) {
+  h.classList.toggle('open');
+  h.nextElementSibling.classList.toggle('open');
+}
+
+// ─── SHOPPING ─────────────────────────────────────────────────────────────────────
+function renderShopping() {
+  var html = '';
+  SHOPPING.forEach(function(s) {
+    html +=
+      '<div class="sh-card">' +
+        '<div class="sh-name">'+s.name+'</div>' +
+        '<div class="sh-cat">'+s.cat+'</div>' +
+        '<div class="sh-addr">📍 '+s.addr+'</div>' +
+        '<div class="sh-desc">'+s.desc+'</div>' +
+        '<div class="rc-acts">' +
+          '<button class="bsm bsm-map" onclick="flyTo('+s.lat+','+s.lng+',\''+s.id+'\')">📍 Map</button>' +
+          '<a class="bsm bsm-dir" href="'+s.maps+'" target="_blank">Directions ↗</a>' +
+          '<a class="bsm bsm-dir" href="'+s.url+'" target="_blank">Website ↗</a>' +
+        '</div>' +
+      '</div>';
+  });
+  document.getElementById('sh-grid').innerHTML = html;
+}
+
+// ─── GYMS ─────────────────────────────────────────────────────────────────────────
+function renderGyms() {
+  var html = '';
+  GYMS.forEach(function(g) {
+    html +=
+      '<div class="gy-card">' +
+        '<span class="gy-badge">'+g.badge+'</span>' +
+        '<div class="gy-name">'+g.name+'</div>' +
+        '<div class="gy-desc">'+g.desc+'</div>' +
+        '<div class="gy-addr">📍 '+g.addr+'</div>' +
+        '<div class="rc-acts">' +
+          '<button class="bsm bsm-map" onclick="flyTo('+g.lat+','+g.lng+',\''+g.id+'\')">📍 Map</button>' +
+          '<a class="bsm bsm-dir" href="'+g.maps+'" target="_blank">Directions ↗</a>' +
+          '<a class="bsm bsm-dir" href="'+g.url+'" target="_blank">Website ↗</a>' +
+        '</div>' +
+      '</div>';
+  });
+  document.getElementById('gy-grid').innerHTML = html;
+}
+</script>
+</body>
+</html>

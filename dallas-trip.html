@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Dallas Trip — July 24–26, 2026</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <style>
 /* required styles */
 
@@ -856,6 +859,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </style>
 </head>
 <body>
+
+<script>
+// Always pull the freshest deploy on refresh (network-first service worker).
+// Skipped on file:// so the emailed standalone version still works offline.
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 
 <!-- iPhone/Files-app tip (shows only on small screens) -->
 <div class="safari-tip">

@@ -968,7 +968,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="tab-panel" id="tab-shopping">
   <div class="section">
     <div class="sec-title">Shopping</div>
-    <div class="sec-sub">Malls, tech, fragrance &amp; luxury — plus thrift &amp; vintage near the Asian District</div>
+    <div class="sec-sub">Malls, tech, fragrance &amp; luxury — plus thrift &amp; vintage in the Asian Trade District</div>
     <div class="sh-grid" id="sh-grid"></div>
   </div>
 </div>
@@ -1094,20 +1094,21 @@ const ENTERTAINMENT = [
    url:'https://www.perotmuseum.org/exhibits/halls/childrens-museum/'},
 ];
 
-// Asian District — top attractions
+// Asian District — top attractions (the Asian Trade District / Koreatown at
+// Royal Ln & Harry Hines is Dallas's officially designated main Asian district)
 const ASIAN = [
-  {id:'as1',name:'Dallas Chinatown (Richardson)',cat:'Shopping & Dining Plaza',catCls:'asian',
+  {id:'as1',name:'Asian Trade District / Koreatown',cat:'★ Main District · Royal Ln & Harry Hines',catCls:'asian',
+   addr:'Harry Hines Blvd & Royal Ln, Dallas TX 75229',
+   desc:"Dallas's officially designated Asian district — the Asian Trade District, also known as Koreatown. Korean BBQ, 24-hour tofu houses, karaoke, wholesale shops, and big Asian markets line Harry Hines. State-recognized with bilingual street signs.",
+   lat:32.8940,lng:-96.8760,
+   maps:'https://maps.google.com/?q=Asian+Trade+District+Koreatown+Harry+Hines+Dallas+TX',
+   url:'https://en.wikipedia.org/wiki/Asian_Trade_District,_Dallas'},
+  {id:'as2',name:'DFW Chinatown (Richardson)',cat:'Shopping & Dining Plaza',catCls:'asian',
    addr:'400 N Greenville Ave, Richardson TX 75081',
-   desc:"DFW's main Chinatown plaza — anchored by 99 Ranch Market and packed with dim sum, bubble tea, bakeries, hot pot, and Asian grocery and gift shops.",
+   desc:"The metroplex's Chinatown plaza just north in Richardson — anchored by 99 Ranch Market and packed with dim sum, bubble tea, bakeries, hot pot, and Asian grocery and gift shops.",
    lat:32.9556,lng:-96.7089,
    maps:'https://maps.google.com/?q=Dallas+Chinatown+Richardson+TX',
-   url:'https://www.google.com/search?q=Dallas+Chinatown+Richardson+TX'},
-  {id:'as2',name:'Koreatown — Royal Lane',cat:'Korean BBQ & Markets',catCls:'asian',
-   addr:'Royal Ln & Harry Hines Blvd, Dallas TX 75229',
-   desc:"Dallas's Koreatown corridor along Royal Lane — Korean BBQ, 24-hour tofu houses, karaoke, and big Asian grocery stores like Komart and H Mart.",
-   lat:32.8940,lng:-96.8760,
-   maps:'https://maps.google.com/?q=Koreatown+Royal+Lane+Dallas+TX',
-   url:'https://www.google.com/search?q=Dallas+Koreatown+Royal+Lane'},
+   url:'https://www.google.com/search?q=DFW+Chinatown+Richardson+TX'},
   {id:'as3',name:'H Mart Carrollton',cat:'Korean Grocery & Food Court',catCls:'asian',
    addr:'2625 Old Denton Rd, Carrollton TX 75007',
    desc:'Massive Korean supermarket with an in-store food court — Korean, Japanese, and Chinese stalls, a bakery, and a huge selection of Asian snacks and ingredients.',
@@ -1150,9 +1151,12 @@ const SHOPPING = [
   {id:'s9',name:'Dolly Python',cat:'Thrift & Vintage',addr:'1916 N Haskell Ave, Dallas TX 75204',
    desc:'Iconic Dallas vintage emporium — western wear, vintage denim, boots, jewelry, and oddities. A must for thrifters.',
    lat:32.7987,lng:-96.7847,maps:'https://maps.google.com/?q=Dolly+Python+Haskell+Ave+Dallas+TX',url:'https://www.google.com/search?q=Dolly+Python+Vintage+Dallas'},
-  {id:'s10',name:'Thrift Giant — Richardson',cat:'Thrift & Vintage',addr:'W Arapaho Rd area, Richardson TX 75080',
-   desc:'Large, well-organized general thrift store near the Asian District — clothing, furniture, and household bargains.',
-   lat:32.9585,lng:-96.7420,maps:'https://maps.google.com/?q=Thrift+Giant+Richardson+TX',url:'https://www.google.com/search?q=Thrift+Giant+Richardson+TX'},
+  {id:'s10',name:'Thrift Giant — Harry Hines',cat:'Thrift & Vintage · Asian District',addr:'10544 Harry Hines Blvd, Dallas TX 75220',
+   desc:'Big, well-organized thrift store right in the Asian Trade District — well-priced men\'s, women\'s and kids\' clothing, shoes, and housewares.',
+   lat:32.8888,lng:-96.8878,maps:'https://maps.google.com/?q=Thrift+Giant+10544+Harry+Hines+Blvd+Dallas+TX',url:'https://www.google.com/search?q=Thrift+Giant+Harry+Hines+Dallas+TX'},
+  {id:'s11',name:'Harry Hines Bazaar',cat:'Flea Market · Asian District',addr:'10788 Harry Hines Blvd, Dallas TX 75220',
+   desc:'Sprawling indoor bazaar of 200+ vendors in the Asian Trade District — vintage finds, apparel, accessories, and bargain hunting. Open Thursday–Sunday.',
+   lat:32.8918,lng:-96.8908,maps:'https://maps.google.com/?q=Harry+Hines+Bazaar+Dallas+TX',url:'https://www.google.com/search?q=Harry+Hines+Bazaar+Dallas+TX'},
 ];
 
 const GYMS = [

@@ -1029,12 +1029,14 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
       <div class="page-h">
         <div class="overline">Climb &amp; Do</div>
         <div class="page-title">Send it, then some</div>
-        <div class="page-sub">Five climbing gyms anchor the weekend, plus a couple of easy add-ons if we want a break.</div>
+        <div class="page-sub">Five climbing gyms anchor the weekend, plus family-friendly stops and a wander through the Asian District.</div>
       </div>
       <div class="sub-h">Climbing <span class="cnt">5 gyms</span></div>
       <div class="list" id="gy-list"></div>
       <div class="sub-h">Fun with Fane <span class="cnt">family-friendly</span></div>
       <div class="list" id="ent-list"></div>
+      <div class="sub-h">Asia without the jet lag <span class="cnt">Asian District</span></div>
+      <div class="list" id="asian-list"></div>
     </section>
 
     <!-- VIEW: SHOP -->
@@ -1500,15 +1502,12 @@ function itemRow(o){
 
 // ─── EAT & DRINK ──────────────────────────────────────────────────────────────────
 let eatFilter = 'All';
-const EAT_CHIPS = ['All','BBQ','Tacos','Italian','Seafood','Fine dining','Asian District'];
+const EAT_CHIPS = ['All','BBQ','Tacos','Italian','Seafood','Fine dining'];
 function eatItems(){
   var arr = [];
   RESTAURANTS.forEach(function(br){ br.items.forEach(function(r){
     arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,rating:r.rating,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng});
   }); });
-  ASIAN.filter(function(a){ return a.eat; }).forEach(function(a){
-    arr.push({id:a.id,name:a.name,sub:a.eatCuisine+' · Asian District',price:'',rating:'',pill:'',tags:['Asian District'],lat:a.lat,lng:a.lng});
-  });
   return arr;
 }
 function setEatFilter(tag){ eatFilter = tag; renderEat(); }
@@ -1530,6 +1529,10 @@ function renderDo(){
   var ents = ENTERTAINMENT.slice().sort(function(a,b){ return parseFloat(b.rating) - parseFloat(a.rating); });
   document.getElementById('ent-list').innerHTML = ents.map(function(p){
     return itemRow({id:p.id,name:p.name,sub:p.cat,rating:p.rating,lat:p.lat,lng:p.lng});
+  }).join('');
+  var districts = ASIAN.filter(function(a){ return a.id !== 'as3'; });
+  document.getElementById('asian-list').innerHTML = districts.map(function(p){
+    return itemRow({id:p.id,name:p.name,sub:p.eatCuisine,chevron:true,lat:p.lat,lng:p.lng});
   }).join('');
 }
 

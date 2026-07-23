@@ -568,8 +568,8 @@ const SHOPPING = [
   {id:'s2',rating:'4.5',name:'IKEA Frisco',cat:'Furniture & home · Frisco',tags:['Home'],addr:'7171 IKEA Dr, Frisco TX 75034',pill:'On the way out',
    desc:'The DFW flagship IKEA, north of Dallas on the drive home toward Norman. Furniture, home goods, and the famous cafeteria.',
    lat:33.0967,lng:-96.8267,maps:'https://maps.google.com/?q=7171+IKEA+Dr+Frisco+TX',url:'https://www.ikea.com/us/en/stores/frisco/'},
-  {id:'s3',rating:'4.3',name:'Louis Vuitton · NorthPark',cat:'Luxury fashion',tags:['Luxury'],addr:'400 NorthPark Ctr, Dallas TX 75225',
-   desc:'Full LV collection (leather goods, RTW, accessories) inside upscale NorthPark Center.',
+  {id:'s3',rating:'4.3',name:'Louis Vuitton · NorthPark',cat:'Luxury fashion & fragrance',tags:['Fragrance'],addr:'400 NorthPark Ctr, Dallas TX 75225',
+   desc:'Full Louis Vuitton collection, including the fragrance line alongside leather goods, RTW, and accessories, inside upscale NorthPark Center.',
    lat:32.8690,lng:-96.7748,maps:'https://maps.google.com/?q=Louis+Vuitton+NorthPark+Dallas',url:'https://us.louisvuitton.com/eng-us/stores/usa/dallas--northpark'},
   {id:'s4',rating:'4.8',name:'The Scent Room',cat:'Fragrance · Uptown',tags:['Fragrance'],addr:'3699 McKinney Ave #301, Dallas TX 75204',
    desc:'Elevated perfumery in West Village specializing in fine and niche fragrances.',
@@ -876,7 +876,7 @@ function shopItems(){
   return arr;
 }
 function shopTags(){
-  var order = ['Malls','Luxury','Thrift & flea','Fragrance','Tech','Home','Asian District'];
+  var order = ['Malls','Thrift & flea','Fragrance','Tech','Home','Asian District'];
   var present = {};
   shopItems().forEach(function(s){ (s.tags||[]).forEach(function(t){ present[t]=1; }); });
   return order.filter(function(t){ return present[t]; });

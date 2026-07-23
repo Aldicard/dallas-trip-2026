@@ -25,13 +25,13 @@
   --bg:#f2eee7;--panel:#fbf9f4;--panel2:#ece7dd;--line:#e2ddd2;--ink:#1e2029;--muted:#7d8090;
   --accent:#3a5db0;--accent-ink:#fff;--accent-soft:rgba(58,93,176,.10);--accent-line:rgba(58,93,176,.26);
   --shadow:0 8px 22px rgba(40,45,70,.08);
-  --cat-eat:#e0663c;--cat-climb:#3a7bd5;--cat-shop:#8a56c2;--cat-asian:#d64545;--cat-stay:#d4a853;
+  --cat-eat:#3f9d5f;--cat-climb:#3a7bd5;--cat-shop:#8a56c2;--cat-asian:#d64545;--cat-stay:#d4a853;
 }
 html[data-theme="dark"]{
   --bg:#17121b;--panel:#221b28;--panel2:#29202f;--line:#352b3f;--ink:#f2ecf1;--muted:#a99fae;
   --accent:#e88f4a;--accent-ink:#1c1208;--accent-soft:rgba(232,143,74,.13);--accent-line:rgba(232,143,74,.30);
   --shadow:0 10px 26px rgba(0,0,0,.45);
-  --cat-climb:#5a9bff;--cat-shop:#a878e0;--cat-asian:#ff6a6a;--cat-stay:#f0c05a;
+  --cat-eat:#57c483;--cat-climb:#5a9bff;--cat-shop:#a878e0;--cat-asian:#ff6a6a;--cat-stay:#f0c05a;
 }
 html,body{height:100%;overscroll-behavior:none}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
@@ -567,13 +567,13 @@ const CAFES = [
 
 // Fun with Fane / attractions
 const ENTERTAINMENT = [
-  {id:'e1',rating:'4.5',name:'Dallas Zoo',cat:'Zoo · 106 acres, largest in Texas',
+  {id:'e1',rating:'4.5',glyph:'zoo',name:'Dallas Zoo',cat:'Zoo · 106 acres, largest in Texas',
    addr:'650 S R.L. Thornton Fwy, Dallas TX 75203',
    desc:"Texas's largest zoo: 106 acres with the Giants of the Savanna habitat, a monorail, gorillas, elephants, and a children's petting zoo. Just minutes from our Airbnb.",
    lat:32.7415,lng:-96.8154,
    maps:'https://maps.google.com/?q=Dallas+Zoo+650+S+RL+Thornton+Fwy+Dallas+TX',
    url:'https://dwazoo.com/'},
-  {id:'e2',rating:'4.6',name:'Perot Museum',cat:'Science & nature · Victory Park',
+  {id:'e2',rating:'4.6',glyph:'museum',name:'Perot Museum',cat:'Science & nature · Victory Park',
    addr:'2201 N Field St, Dallas TX 75201',
    desc:"The Perot Museum of Nature and Science downtown, home to the hands-on Children's Museum: interactive exhibits plus dinosaurs, gems, and a birds-of-paradise theater across five floors.",
    lat:32.7868,lng:-96.8065,
@@ -682,16 +682,30 @@ let calcExpenses = [
 
 // Marker glyphs (24x24, drawn in the nav's fine-line family)
 const MARKER_GLYPHS = {
-  eat:  'M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9',
-  climb:'M2.5 19h19M5 19l5-8 3.5 4.5L17 9l4.5 10M9.5 11.2l0.5-.7',
-  shop: 'M6.5 8h11l1 12.5H5.5L6.5 8zM9.2 8a2.8 2.8 0 0 1 5.6 0',
-  stay: 'M3.5 11 12 4l8.5 7M6 9.7V20h12V9.7',
-  gate: 'M4 8h16M5.5 5h13M7.5 8v12M16.5 8v12M7.5 12h9',
-  ent:  'M6 3v18M6 4h11l-2.5 3L17 10H6'
+  // eat
+  restaurant:'M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9',
+  coffee:'M7 8h10l-1 12H8L7 8zM5.5 8h13M9.5 4c-.4.7-.4 1.3 0 2M14.5 4c-.4.7-.4 1.3 0 2',
+  cafe:'M5 8h11v4a5.5 5.5 0 0 1-5.5 5.5H10.5A5.5 5.5 0 0 1 5 12V8zM16 9h1.8a2 2 0 0 1 0 4H16M4 20.5h13M8 3.6c-.4.7-.4 1.3 0 2M12 3.6c-.4.7-.4 1.3 0 2',
+  breakfast:'M4.8 13a6.2 4.6 0 1 0 12.4 0 6.2 4.6 0 1 0-12.4 0zM13 12m-2.2 0a2.2 2.2 0 1 0 4.4 0 2.2 2.2 0 1 0-4.4 0',
+  // shop
+  mall:'M5 9l2-4h10l2 4M5 9v11h14V9M5 9h14M10 20v-6h4v6',
+  fragrance:'M10 3h4v2M9 5h6v2l1 1.5V18a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V8.5L9 7V5z',
+  thrift:'M12 7.2V6.4a1.4 1.4 0 1 1 1.4 1.4M12 7.2L4.5 13.4a1 1 0 0 0 .6 1.8h13.8a1 1 0 0 0 .6-1.8L12 7.2z',
+  home:'M4 11V9.5A2.5 2.5 0 0 1 6.5 7h11A2.5 2.5 0 0 1 20 9.5V11M3.5 11A1.5 1.5 0 0 1 5 12.5V16h14v-3.5a1.5 1.5 0 0 1 3 0V18H2v-5.5A1.5 1.5 0 0 1 3.5 11zM6 16v-3h12v3',
+  tech:'M3.5 5h17v10.5h-17zM9 19h6M12 15.5V19',
+  grocery:'M3 4h2.2l2.4 11h9.6l2-7.5H6.3M9 18.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zM16.5 18.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z',
+  // climb & do
+  peak:'M2.5 19h19M5 19l5-8 3.5 4.5L17 9l4.5 10M9.5 11.2l0.5-.7',
+  museum:'M3 9.5l9-5 9 5M4.2 9.5v.9h15.6v-.9M6.5 11v6.5M10 11v6.5M14 11v6.5M17.5 11v6.5M3.2 20.2h17.6',
+  zoo:'M12 13.2a3 3 0 0 1 2.9 3.1c0 1.6-1.4 2.2-2.9 2.2s-2.9-.6-2.9-2.2A3 3 0 0 1 12 13.2zM6.7 11.5a1.6 1.7 0 1 0 0-3.4 1.6 1.7 0 0 0 0 3.4zM17.3 11.5a1.6 1.7 0 1 0 0-3.4 1.6 1.7 0 0 0 0 3.4zM9.7 8.6a1.5 1.6 0 1 0 0-3.2 1.5 1.6 0 0 0 0 3.2zM14.3 8.6a1.5 1.6 0 1 0 0-3.2 1.5 1.6 0 0 0 0 3.2z',
+  // asian
+  gate:'M4 8h16M5.5 5h13M7.5 8v12M16.5 8v12M7.5 12h9',
+  // stay
+  house:'M3.5 11 12 4l8.5 7M6 9.7V20h12V9.7'
 };
 const CAT_COLORS = {
-  light:{eat:'#e0663c',climb:'#3a7bd5',shop:'#8a56c2',asian:'#d64545',stay:'#d4a853'},
-  dark: {eat:'#e0663c',climb:'#5a9bff',shop:'#a878e0',asian:'#ff6a6a',stay:'#f0c05a'}
+  light:{eat:'#3f9d5f',climb:'#3a7bd5',shop:'#8a56c2',asian:'#d64545',stay:'#d4a853'},
+  dark: {eat:'#57c483',climb:'#5a9bff',shop:'#a878e0',asian:'#ff6a6a',stay:'#f0c05a'}
 };
 
 // ─── BOOT ───────────────────────────────────────────────────────────────────────
@@ -741,14 +755,12 @@ function chipMarkup(col, glyph, cream, px) {
     '<circle cx="22" cy="22" r="14" fill="'+cream+'" stroke="'+col+'" stroke-width="1.8"/>' +
     '<g transform="translate(13,13) scale(.75)" fill="none" stroke="'+col+'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="'+glyph+'"/></g></svg>';
 }
-function markerIcon(cat) {
+function markerIcon(cat, glyph) {
   var theme = document.documentElement.getAttribute('data-theme') || 'light';
-  var colorKey = (cat === 'ent') ? 'climb' : (cat === 'stay' ? 'stay' : cat);
-  var col = CAT_COLORS[theme][colorKey];
+  var col = CAT_COLORS[theme][cat] || CAT_COLORS[theme].eat;
   var cream = (theme === 'dark') ? '#241f2b' : '#faf6ef';
   var px = (cat === 'stay') ? 42 : 36;
-  var glyphKey = (cat === 'asian') ? 'gate' : cat;
-  return L.divIcon({html:chipMarkup(col, MARKER_GLYPHS[glyphKey] || MARKER_GLYPHS.eat, cream, px),
+  return L.divIcon({html:chipMarkup(col, MARKER_GLYPHS[glyph] || MARKER_GLYPHS.restaurant, cream, px),
     className:'mk', iconSize:[px,px], iconAnchor:[px/2, px/2], popupAnchor:[0, -(px/2+3)]});
 }
 function tileUrl() {
@@ -762,13 +774,20 @@ function swapTiles() {
   tileLayer.setUrl(tileUrl());
 }
 function recolorMarkers() {
-  allMarkers.forEach(function(m){ m.marker.setIcon(markerIcon(m.cat)); });
+  allMarkers.forEach(function(m){ m.marker.setIcon(markerIcon(m.cat, m.glyph)); });
 }
-function addMarker(lat, lng, cat, layerKey, popupHtml, z) {
-  var m = L.marker([lat,lng], {icon:markerIcon(cat), zIndexOffset:(z||0)}).addTo(layers[layerKey]);
+function addMarker(lat, lng, cat, glyph, layerKey, popupHtml, z) {
+  var m = L.marker([lat,lng], {icon:markerIcon(cat, glyph), zIndexOffset:(z||0)}).addTo(layers[layerKey]);
   if (popupHtml) m.bindPopup(popupHtml, {maxWidth:250, autoPanPaddingTopLeft:[16,150], autoPanPaddingBottomRight:[16,28]});
-  allMarkers.push({marker:m, cat:cat});
+  allMarkers.push({marker:m, cat:cat, glyph:glyph});
   return m;
+}
+// Map a shop item to its sub-category glyph from its primary tag.
+var SHOP_GLYPHS = {'Malls':'mall','Fragrance':'fragrance','Thrift & flea':'thrift','Home':'home','Tech':'tech'};
+function shopGlyph(s) {
+  var tags = s.tags || [];
+  for (var k in SHOP_GLYPHS) { if (tags.indexOf(k) >= 0) return SHOP_GLYPHS[k]; }
+  return 'mall';
 }
 function poiPopup(name, catText, catColor, desc, addr, mapsUrl, siteUrl, siteLabel) {
   return '<div class="pu-title">'+name+'</div>' +
@@ -790,7 +809,7 @@ function initMap() {
   ['stay','eat','climb','shop','asian'].forEach(function(k){ layers[k] = L.layerGroup().addTo(map); });
 
   // Stay
-  markers[STAY.id] = addMarker(STAY.lat, STAY.lng, 'stay', 'stay',
+  markers[STAY.id] = addMarker(STAY.lat, STAY.lng, 'stay', 'house', 'stay',
     '<div class="pu-title">Where we\'re staying</div>' +
     '<div class="pu-sub" style="font-weight:600;color:var(--ink)">'+STAY.title+'</div>' +
     '<div class="pu-sub">'+STAY.location+'</div>' +
@@ -801,37 +820,37 @@ function initMap() {
 
   // Restaurants
   RESTAURANTS.forEach(function(br){ br.items.forEach(function(r){
-    markers[r.id] = addMarker(r.lat, r.lng, 'eat', 'eat',
+    markers[r.id] = addMarker(r.lat, r.lng, 'eat', 'restaurant', 'eat',
       poiPopup(r.name, r.cuisine+' · '+r.price, CAT_COLORS.light.eat, r.desc, r.addr, r.maps, r.url, 'View on Google'));
   }); });
 
   // Cafes / coffee / breakfast
   CAFES.forEach(function(c){
-    markers[c.id] = addMarker(c.lat, c.lng, 'eat', 'eat',
+    markers[c.id] = addMarker(c.lat, c.lng, 'eat', c.kind, 'eat',
       poiPopup(c.name, c.sub+' · '+c.price, CAT_COLORS.light.eat, c.desc, c.addr, c.maps, c.url, 'Website'));
   });
 
   // Gyms (Climb)
   GYMS.forEach(function(g){
-    markers[g.id] = addMarker(g.lat, g.lng, 'climb', 'climb',
+    markers[g.id] = addMarker(g.lat, g.lng, 'climb', 'peak', 'climb',
       poiPopup(g.name, 'Climbing · ★ '+g.rating, CAT_COLORS.light.climb, g.desc, g.addr, g.maps, g.url));
   });
 
   // Entertainment (Climb & Do layer)
   ENTERTAINMENT.forEach(function(p){
-    markers[p.id] = addMarker(p.lat, p.lng, 'ent', 'climb',
+    markers[p.id] = addMarker(p.lat, p.lng, 'climb', p.glyph, 'climb',
       poiPopup(p.name, p.cat, CAT_COLORS.light.climb, p.desc, p.addr, p.maps, p.url));
   });
 
   // Shopping
   SHOPPING.forEach(function(s){
-    markers[s.id] = addMarker(s.lat, s.lng, 'shop', 'shop',
+    markers[s.id] = addMarker(s.lat, s.lng, 'shop', shopGlyph(s), 'shop',
       poiPopup(s.name, s.cat, CAT_COLORS.light.shop, s.desc, s.addr, s.maps, s.url));
   });
 
   // Asian District
   ASIAN.forEach(function(p){
-    markers[p.id] = addMarker(p.lat, p.lng, 'asian', 'asian',
+    markers[p.id] = addMarker(p.lat, p.lng, 'asian', (p.id === 'as3' ? 'grocery' : 'gate'), 'asian',
       poiPopup(p.name, p.cat, CAT_COLORS.light.asian, p.desc, p.addr, p.maps, p.url, 'Learn more'));
   });
 

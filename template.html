@@ -880,9 +880,12 @@ function flyTo(lat, lng, id) {
   showView('map');
   setTimeout(function() {
     if (!map) return;
-    map.flyTo([lat, lng], 16, {duration:1.05});
-    if (markers[id]) { setTimeout(function(){ markers[id].openPopup(); }, 1250); }
-  }, 90);
+    // The map container was hidden until now, so its cached size can be stale
+    // (blank/grey map on iOS Safari). Recalculate before moving.
+    map.invalidateSize();
+    map.setView([lat, lng], 15, {animate:true, duration:0.8});
+    if (markers[id]) { setTimeout(function(){ markers[id].openPopup(); }, 950); }
+  }, 130);
 }
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────────

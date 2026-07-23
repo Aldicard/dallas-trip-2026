@@ -583,16 +583,16 @@ const SHOPPING = [
   {id:'s7',rating:'4.9',name:'Amir Oud · House of Royal Fragrance',cat:'Fragrance · Richardson',tags:['Fragrance'],addr:'1411 E Campbell Rd #1900, Richardson TX 75081',
    desc:'Boutique specializing in premium oud fragrances with an in-store scent bar for personalized sessions.',
    lat:32.9664,lng:-96.7283,maps:'https://maps.google.com/?q=1411+E+Campbell+Rd+Richardson+TX',url:'https://amiroud.com/'},
-  {id:'s8',rating:'4.0',name:'Buffalo Exchange',cat:'Thrift & vintage · Greenville',tags:['Thrift & vintage'],addr:'3424 Greenville Ave, Dallas TX 75206',
+  {id:'s8',rating:'4.0',name:'Buffalo Exchange',cat:'Thrift & vintage · Greenville',tags:['Thrift & flea'],addr:'3424 Greenville Ave, Dallas TX 75206',
    desc:'Curated buy-sell-trade resale: quality secondhand and vintage clothing, denim, and designer finds on Lower Greenville.',
    lat:32.8267,lng:-96.7702,maps:'https://maps.google.com/?q=Buffalo+Exchange+Greenville+Ave+Dallas+TX',url:'https://www.buffaloexchange.com/'},
-  {id:'s9',rating:'4.6',name:'Dolly Python',cat:'Thrift & vintage · East Dallas',tags:['Thrift & vintage'],addr:'1916 N Haskell Ave, Dallas TX 75204',
+  {id:'s9',rating:'4.6',name:'Dolly Python',cat:'Thrift & vintage · East Dallas',tags:['Thrift & flea'],addr:'1916 N Haskell Ave, Dallas TX 75204',
    desc:'Iconic Dallas vintage emporium: western wear, vintage denim, boots, jewelry, and oddities. A must for thrifters.',
    lat:32.7987,lng:-96.7847,maps:'https://maps.google.com/?q=Dolly+Python+Haskell+Ave+Dallas+TX',url:'https://www.google.com/search?q=Dolly+Python+Vintage+Dallas'},
-  {id:'s10',rating:'4.3',name:'Thrift Giant · Harry Hines',cat:'Thrift · Asian District',tags:['Thrift & vintage','Asian District'],addr:'10544 Harry Hines Blvd, Dallas TX 75220',
+  {id:'s10',rating:'4.3',name:'Thrift Giant · Harry Hines',cat:'Thrift · Asian District',tags:['Thrift & flea','Asian District'],addr:'10544 Harry Hines Blvd, Dallas TX 75220',
    desc:"Big, well-organized thrift store right in the Asian Trade District: well-priced men's, women's and kids' clothing, shoes, and housewares.",
    lat:32.8888,lng:-96.8878,maps:'https://maps.google.com/?q=Thrift+Giant+10544+Harry+Hines+Blvd+Dallas+TX',url:'https://www.google.com/search?q=Thrift+Giant+Harry+Hines+Dallas+TX'},
-  {id:'s11',rating:'4.1',name:'Harry Hines Bazaar',cat:'Flea market · Asian District',tags:['Flea market','Asian District'],addr:'10788 Harry Hines Blvd, Dallas TX 75220',
+  {id:'s11',rating:'4.1',name:'Harry Hines Bazaar',cat:'Flea market · Asian District',tags:['Thrift & flea','Asian District'],addr:'10788 Harry Hines Blvd, Dallas TX 75220',
    desc:'Sprawling indoor bazaar of 200+ vendors in the Asian Trade District: vintage finds, apparel, accessories, and bargain hunting. Open Thursday–Sunday.',
    lat:32.8918,lng:-96.8908,maps:'https://maps.google.com/?q=Harry+Hines+Bazaar+Dallas+TX',url:'https://www.google.com/search?q=Harry+Hines+Bazaar+Dallas+TX'},
 ];
@@ -876,7 +876,7 @@ function shopItems(){
   return arr;
 }
 function shopTags(){
-  var order = ['Malls','Luxury','Thrift & vintage','Fragrance','Tech','Home','Flea market','Asian District'];
+  var order = ['Malls','Luxury','Thrift & flea','Fragrance','Tech','Home','Asian District'];
   var present = {};
   shopItems().forEach(function(s){ (s.tags||[]).forEach(function(t){ present[t]=1; }); });
   return order.filter(function(t){ return present[t]; });

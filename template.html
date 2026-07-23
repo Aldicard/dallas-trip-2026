@@ -91,6 +91,8 @@ html[data-theme="dark"] .opt.dark{background:var(--accent);color:var(--accent-in
 .chip{font-size:12.5px;font-weight:500;color:var(--muted);background:var(--panel);border:1px solid var(--line);
   border-radius:20px;padding:7px 13px;white-space:nowrap;cursor:pointer;font-family:inherit}
 .chip.on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent);font-weight:600}
+.chips.tight{padding-top:8px}
+.chip-label{font-size:12px;color:var(--muted);font-weight:600;align-self:center;margin-right:2px}
 
 .sub-h{font-family:'Fraunces',serif;font-size:20px;font-weight:500;letter-spacing:-.3px;padding:26px 22px 2px;
   display:flex;align-items:baseline;justify-content:space-between}
@@ -358,6 +360,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
         <div class="page-sub">Coffee, breakfast, and dinner across the city, from Oak Cliff mornings to Deep Ellum barbecue and a fine-dining night out.</div>
       </div>
       <div class="chips" id="eat-chips"></div>
+      <div class="chips tight" id="eat-prices"></div>
       <div class="list" id="eat-list"></div>
     </section>
 
@@ -520,43 +523,43 @@ const RESTAURANTS = [
 // Cafes, coffee shops, and breakfast spots. kind drives the (upcoming) map
 // sub-category icon; tags drive the Eat filter chips.
 const CAFES = [
-  {id:'c1',rating:'4.6',name:'The Wild Detectives',kind:'cafe',sub:'Coffee, books & bar',area:'Bishop Arts',tags:['Coffee'],
+  {id:'c1',rating:'4.6',name:'The Wild Detectives',kind:'cafe',sub:'Coffee, books & bar',price:'$5–12',area:'Bishop Arts',tags:['Coffee'],
    desc:'Beloved indie bookstore, bar and coffeehouse just off Bishop. A great spot to linger over a cortado.',
    addr:'314 W 8th St, Dallas TX 75208',lat:32.7460,lng:-96.8281,
    maps:'https://maps.google.com/?q=The+Wild+Detectives+Dallas+TX',url:'https://thewilddetectives.com/'},
-  {id:'c2',rating:'4.6',name:'Murray Street Coffee',kind:'coffee',sub:'Espresso & snacks',area:'Deep Ellum',tags:['Coffee'],
+  {id:'c2',rating:'4.6',name:'Murray Street Coffee',kind:'coffee',sub:'Espresso & snacks',price:'$5–9',area:'Deep Ellum',tags:['Coffee'],
    desc:'Cozy, artistic Deep Ellum staple serving a tight menu of excellent espresso drinks. Closes early, shut Sundays.',
    addr:'103 Murray St, Dallas TX 75226',lat:32.7843,lng:-96.7828,
    maps:'https://maps.google.com/?q=Murray+Street+Coffee+Dallas+TX',url:'https://www.murraystreetcoffee.com/'},
-  {id:'c3',rating:'4.6',name:'Houndstooth Coffee',kind:'coffee',sub:'Espresso & pourover',area:'Henderson Ave',tags:['Coffee'],
+  {id:'c3',rating:'4.6',name:'Houndstooth Coffee',kind:'coffee',sub:'Espresso & pourover',price:'$5–9',area:'Henderson Ave',tags:['Coffee'],
    desc:"One of the city's most reliable specialty coffee counters, near Via Triozzi and Georgie.",
    addr:'1900 N Henderson Ave, Dallas TX 75206',lat:32.8106,lng:-96.7770,
    maps:'https://maps.google.com/?q=Houndstooth+Coffee+Henderson+Dallas+TX',url:'https://houndstoothcoffee.com/cafes/henderson-ave/'},
-  {id:'c4',rating:'4.5',name:'Wayward Coffee Co.',kind:'coffee',sub:'Single-origin espresso',area:'Oak Cliff',tags:['Coffee'],
+  {id:'c4',rating:'4.5',name:'Wayward Coffee Co.',kind:'coffee',sub:'Single-origin espresso',price:'$5–9',area:'Oak Cliff',tags:['Coffee'],
    desc:'Design-forward Oak Cliff cafe near Bishop Arts, built around a rotating line-up of roasters.',
    addr:'1318 W Davis St, Dallas TX 75208',lat:32.7489,lng:-96.8345,
    maps:'https://maps.google.com/?q=Wayward+Coffee+Co+Dallas+TX',url:'https://www.waywardcoffee.co/'},
-  {id:'c5',rating:'4.4',name:'La Reunion',kind:'cafe',sub:'Cortados & breakfast tacos',area:'Bishop Arts',tags:['Coffee'],
+  {id:'c5',rating:'4.4',name:'La Reunion',kind:'cafe',sub:'Cortados & breakfast tacos',price:'$6–14',area:'Bishop Arts',tags:['Coffee'],
    desc:'Quiet Bishop Arts cafe by day, wine bar by night. Cortados, cafe au lait, and potato breakfast tacos.',
    addr:'229 N Bishop Ave, Dallas TX 75208',lat:32.7503,lng:-96.8288,
    maps:'https://maps.google.com/?q=La+Reunion+Bishop+Ave+Dallas+TX',url:'https://www.lareuniondallas.com/'},
-  {id:'c6',rating:'4.4',name:'Ascension Coffee',kind:'coffee',sub:'Coffee & brunch',area:'Design District',tags:['Coffee','Breakfast'],
+  {id:'c6',rating:'4.4',name:'Ascension Coffee',kind:'coffee',sub:'Coffee & brunch',price:'$8–16',area:'Design District',tags:['Coffee','Breakfast'],
    desc:'Stylish coffeehouse with premium slow-roasted coffee plus brunch and bar bites, near Carbone Vino. Opens 6:30am.',
    addr:'1621 Oak Lawn Ave, Dallas TX 75207',lat:32.8096,lng:-96.8206,
    maps:'https://maps.google.com/?q=Ascension+Coffee+Design+District+Dallas+TX',url:'https://www.ascensioncoffee.com/'},
-  {id:'c7',rating:'4.4',name:'Merit Coffee',kind:'coffee',sub:'Roasted-in-Texas coffee',area:'Deep Ellum',tags:['Coffee'],
+  {id:'c7',rating:'4.4',name:'Merit Coffee',kind:'coffee',sub:'Roasted-in-Texas coffee',price:'$5–9',area:'Deep Ellum',tags:['Coffee'],
    desc:'Airy, stylish Deep Ellum cafe with thoughtfully roasted coffee and plenty of seating.',
    addr:'2639 Main St, Dallas TX 75226',lat:32.7836,lng:-96.7848,
    maps:'https://maps.google.com/?q=Merit+Coffee+Deep+Ellum+Dallas+TX',url:'https://meritcoffee.com/pages/deep-ellum'},
-  {id:'c8',rating:'4.5',name:"Norma's Cafe",kind:'breakfast',sub:'Classic Texas diner',area:'Oak Cliff',tags:['Breakfast'],
+  {id:'c8',rating:'4.5',name:"Norma's Cafe",kind:'breakfast',sub:'Classic Texas diner',price:'$10–16',area:'Oak Cliff',tags:['Breakfast'],
    desc:'An Oak Cliff institution since 1956: chicken-fried steak, giant pancakes, and breakfast tacos. Open 7am daily, minutes from the Airbnb.',
    addr:'1123 W Davis St, Dallas TX 75208',lat:32.7486,lng:-96.8300,
    maps:'https://maps.google.com/?q=Normas+Cafe+Davis+St+Dallas+TX',url:'https://normascafe.com/'},
-  {id:'c9',rating:'4.5',name:'Encina',kind:'breakfast',sub:'Weekend brunch',area:'Bishop Arts',tags:['Breakfast'],
+  {id:'c9',rating:'4.5',name:'Encina',kind:'breakfast',sub:'Weekend brunch',price:'$15–25',area:'Bishop Arts',tags:['Breakfast'],
    desc:'Bishop Arts neighborhood favorite for weekend brunch: blue-corn butterscotch pancakes and chorizo-gravy biscuits.',
    addr:'614 W Davis St, Dallas TX 75208',lat:32.7493,lng:-96.8320,
    maps:'https://maps.google.com/?q=Encina+Davis+St+Dallas+TX',url:'https://www.encinadallas.com/'},
-  {id:'c10',rating:'4.5',name:'Knox Bistro',kind:'breakfast',sub:'French bistro brunch',area:'Knox-Henderson',tags:['Breakfast'],
+  {id:'c10',rating:'4.5',name:'Knox Bistro',kind:'breakfast',sub:'French bistro brunch',price:'$15–25',area:'Knox-Henderson',tags:['Breakfast'],
    desc:'French-leaning Knox-Henderson bistro near Georgie, known for its brunch burger.',
    addr:'3230 Knox St, Dallas TX 75205',lat:32.8213,lng:-96.7918,
    maps:'https://maps.google.com/?q=Knox+Bistro+Knox+St+Dallas+TX',url:'https://knoxbistro.com/'},
@@ -805,7 +808,7 @@ function initMap() {
   // Cafes / coffee / breakfast
   CAFES.forEach(function(c){
     markers[c.id] = addMarker(c.lat, c.lng, 'eat', 'eat',
-      poiPopup(c.name, c.sub, CAT_COLORS.light.eat, c.desc, c.addr, c.maps, c.url, 'Website'));
+      poiPopup(c.name, c.sub+' · '+c.price, CAT_COLORS.light.eat, c.desc, c.addr, c.maps, c.url, 'Website'));
   });
 
   // Gyms (Climb)
@@ -885,24 +888,48 @@ function itemRow(o){
 }
 
 // ─── EAT & DRINK ──────────────────────────────────────────────────────────────────
-let eatFilter = 'All';
-const EAT_CHIPS = ['All','Coffee','Breakfast','BBQ','Tacos','Italian','Seafood','Fine dining'];
+// Multi-select facets: type (cuisine/kind) and price tier. Empty = show all.
+let eatCats = [];
+let eatPrices = [];
+const EAT_CATS = ['Coffee','Breakfast','BBQ','Tacos','Italian','Seafood','Fine dining'];
+const EAT_PRICES = ['$','$$','$$$'];
 function eatItems(){
   var arr = [];
   RESTAURANTS.forEach(function(br){ br.items.forEach(function(r){
     arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,rating:r.rating,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng});
   }); });
   CAFES.forEach(function(c){
-    arr.push({id:c.id,name:c.name,sub:c.sub+' · '+c.area,rating:c.rating,pill:c.pill||'',tags:c.tags||[],lat:c.lat,lng:c.lng});
+    arr.push({id:c.id,name:c.name,sub:c.sub+' · '+c.area,price:c.price,rating:c.rating,pill:c.pill||'',tags:c.tags||[],lat:c.lat,lng:c.lng});
   });
   return arr;
 }
-function setEatFilter(tag){ eatFilter = tag; renderEat(); }
+function priceTier(p){
+  var nums = (String(p||'').match(/\d+/g)||[]).map(Number);
+  if (!nums.length) return '';
+  var mid = nums.length > 1 ? (nums[0]+nums[1])/2 : nums[0];
+  return mid < 15 ? '$' : (mid < 40 ? '$$' : '$$$');
+}
+function toggleIn(arr, v){ var i = arr.indexOf(v); if (i < 0) arr.push(v); else arr.splice(i,1); }
+function toggleEatCat(t){ toggleIn(eatCats, t); renderEat(); }
+function toggleEatPrice(t){ toggleIn(eatPrices, t); renderEat(); }
+function clearEatFilter(){ eatCats = []; eatPrices = []; renderEat(); }
 function renderEat(){
-  document.getElementById('eat-chips').innerHTML = EAT_CHIPS.map(function(t){
-    return '<div class="chip'+(t===eatFilter?' on':'')+'" onclick="setEatFilter(\''+t+'\')">'+t+'</div>';
-  }).join('');
-  var list = eatItems().filter(function(o){ return eatFilter==='All' || (o.tags.indexOf(eatFilter) !== -1); });
+  var noneOn = (eatCats.length === 0 && eatPrices.length === 0);
+  document.getElementById('eat-chips').innerHTML =
+    '<div class="chip'+(noneOn?' on':'')+'" onclick="clearEatFilter()">All</div>' +
+    EAT_CATS.map(function(t){
+      return '<div class="chip'+(eatCats.indexOf(t)>=0?' on':'')+'" onclick="toggleEatCat(\''+t+'\')">'+t+'</div>';
+    }).join('');
+  document.getElementById('eat-prices').innerHTML =
+    '<span class="chip-label">Price</span>' +
+    EAT_PRICES.map(function(t){
+      return '<div class="chip'+(eatPrices.indexOf(t)>=0?' on':'')+'" onclick="toggleEatPrice(\''+t+'\')">'+t+'</div>';
+    }).join('');
+  var list = eatItems().filter(function(o){
+    var catOk   = eatCats.length === 0   || (o.tags||[]).some(function(t){ return eatCats.indexOf(t) >= 0; });
+    var priceOk = eatPrices.length === 0 || eatPrices.indexOf(priceTier(o.price)) >= 0;
+    return catOk && priceOk;
+  });
   list.sort(function(a,b){ return (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0); });
   document.getElementById('eat-list').innerHTML = list.map(itemRow).join('');
 }

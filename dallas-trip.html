@@ -996,7 +996,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
           <div class="sec-h">The dashboard</div>
           <div class="grid">
             <button class="card wide" onclick="showView('map')"><div style="display:flex;align-items:center;gap:14px"><div class="cico"><svg viewBox="0 0 24 24"><path d="M9 3 3 5.5v16L9 19l6 2.5 6-2.5v-16L15 6 9 3z"/><path d="M9 3v16M15 6v15.5"/></svg></div><div><div class="ctitle">Open the map</div><div class="ccount">Every pin in one view</div></div></div><span class="carw">→</span></button>
-            <button class="card" onclick="showView('eat')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg></div><div><div class="ctitle">Eat &amp; Drink</div><div class="ccount">9 spots shortlisted</div></div></button>
+            <button class="card" onclick="showView('eat')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg></div><div><div class="ctitle">Eat &amp; Drink</div><div class="ccount">19 spots shortlisted</div></div></button>
             <button class="card" onclick="showView('do')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M12 3v18M6 8l6-5 6 5M7 21h10"/></svg></div><div><div class="ctitle">Climb &amp; Do</div><div class="ccount">5 gyms + outings</div></div></button>
             <button class="card" onclick="showView('shop')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M6 8h12l1 13H5L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></div><div><div class="ctitle">Shop</div><div class="ccount">NorthPark · Harry Hines</div></div></button>
             <button class="card" onclick="showView('stay')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6"/></svg></div><div><div class="ctitle">Stay &amp; Costs</div><div class="ccount">Split the Airbnb + gas</div></div></button>
@@ -1018,7 +1018,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
       <div class="page-h">
         <div class="overline">Eat &amp; Drink</div>
         <div class="page-title">Places to eat</div>
-        <div class="page-sub">Nine spots shortlisted across the city, from Deep Ellum barbecue to a fine-dining night out.</div>
+        <div class="page-sub">Coffee, breakfast, and dinner across the city, from Oak Cliff mornings to Deep Ellum barbecue and a fine-dining night out.</div>
       </div>
       <div class="chips" id="eat-chips"></div>
       <div class="list" id="eat-list"></div>
@@ -1183,6 +1183,51 @@ const RESTAURANTS = [
        url:'https://www.google.com/search?q=Sanjh+Restaurant+Bar+Irving+TX'},
     ]
   },
+];
+
+// Cafes, coffee shops, and breakfast spots. kind drives the (upcoming) map
+// sub-category icon; tags drive the Eat filter chips.
+const CAFES = [
+  {id:'c1',rating:'4.6',name:'The Wild Detectives',kind:'cafe',sub:'Coffee, books & bar',area:'Bishop Arts',tags:['Coffee'],
+   desc:'Beloved indie bookstore, bar and coffeehouse just off Bishop. A great spot to linger over a cortado.',
+   addr:'314 W 8th St, Dallas TX 75208',lat:32.7460,lng:-96.8281,
+   maps:'https://maps.google.com/?q=The+Wild+Detectives+Dallas+TX',url:'https://thewilddetectives.com/'},
+  {id:'c2',rating:'4.6',name:'Murray Street Coffee',kind:'coffee',sub:'Espresso & snacks',area:'Deep Ellum',tags:['Coffee'],
+   desc:'Cozy, artistic Deep Ellum staple serving a tight menu of excellent espresso drinks. Closes early, shut Sundays.',
+   addr:'103 Murray St, Dallas TX 75226',lat:32.7843,lng:-96.7828,
+   maps:'https://maps.google.com/?q=Murray+Street+Coffee+Dallas+TX',url:'https://www.murraystreetcoffee.com/'},
+  {id:'c3',rating:'4.6',name:'Houndstooth Coffee',kind:'coffee',sub:'Espresso & pourover',area:'Henderson Ave',tags:['Coffee'],
+   desc:"One of the city's most reliable specialty coffee counters, near Via Triozzi and Georgie.",
+   addr:'1900 N Henderson Ave, Dallas TX 75206',lat:32.8106,lng:-96.7770,
+   maps:'https://maps.google.com/?q=Houndstooth+Coffee+Henderson+Dallas+TX',url:'https://houndstoothcoffee.com/cafes/henderson-ave/'},
+  {id:'c4',rating:'4.5',name:'Wayward Coffee Co.',kind:'coffee',sub:'Single-origin espresso',area:'Oak Cliff',tags:['Coffee'],
+   desc:'Design-forward Oak Cliff cafe near Bishop Arts, built around a rotating line-up of roasters.',
+   addr:'1318 W Davis St, Dallas TX 75208',lat:32.7489,lng:-96.8345,
+   maps:'https://maps.google.com/?q=Wayward+Coffee+Co+Dallas+TX',url:'https://www.waywardcoffee.co/'},
+  {id:'c5',rating:'4.4',name:'La Reunion',kind:'cafe',sub:'Cortados & breakfast tacos',area:'Bishop Arts',tags:['Coffee'],
+   desc:'Quiet Bishop Arts cafe by day, wine bar by night. Cortados, cafe au lait, and potato breakfast tacos.',
+   addr:'229 N Bishop Ave, Dallas TX 75208',lat:32.7503,lng:-96.8288,
+   maps:'https://maps.google.com/?q=La+Reunion+Bishop+Ave+Dallas+TX',url:'https://www.lareuniondallas.com/'},
+  {id:'c6',rating:'4.4',name:'Ascension Coffee',kind:'coffee',sub:'Coffee & brunch',area:'Design District',tags:['Coffee','Breakfast'],
+   desc:'Stylish coffeehouse with premium slow-roasted coffee plus brunch and bar bites, near Carbone Vino. Opens 6:30am.',
+   addr:'1621 Oak Lawn Ave, Dallas TX 75207',lat:32.8096,lng:-96.8206,
+   maps:'https://maps.google.com/?q=Ascension+Coffee+Design+District+Dallas+TX',url:'https://www.ascensioncoffee.com/'},
+  {id:'c7',rating:'4.4',name:'Merit Coffee',kind:'coffee',sub:'Roasted-in-Texas coffee',area:'Deep Ellum',tags:['Coffee'],
+   desc:'Airy, stylish Deep Ellum cafe with thoughtfully roasted coffee and plenty of seating.',
+   addr:'2639 Main St, Dallas TX 75226',lat:32.7836,lng:-96.7848,
+   maps:'https://maps.google.com/?q=Merit+Coffee+Deep+Ellum+Dallas+TX',url:'https://meritcoffee.com/pages/deep-ellum'},
+  {id:'c8',rating:'4.5',name:"Norma's Cafe",kind:'breakfast',sub:'Classic Texas diner',area:'Oak Cliff',tags:['Breakfast'],
+   desc:'An Oak Cliff institution since 1956: chicken-fried steak, giant pancakes, and breakfast tacos. Open 7am daily, minutes from the Airbnb.',
+   addr:'1123 W Davis St, Dallas TX 75208',lat:32.7486,lng:-96.8300,
+   maps:'https://maps.google.com/?q=Normas+Cafe+Davis+St+Dallas+TX',url:'https://normascafe.com/'},
+  {id:'c9',rating:'4.5',name:'Encina',kind:'breakfast',sub:'Weekend brunch',area:'Bishop Arts',tags:['Breakfast'],
+   desc:'Bishop Arts neighborhood favorite for weekend brunch: blue-corn butterscotch pancakes and chorizo-gravy biscuits.',
+   addr:'614 W Davis St, Dallas TX 75208',lat:32.7493,lng:-96.8320,
+   maps:'https://maps.google.com/?q=Encina+Davis+St+Dallas+TX',url:'https://www.encinadallas.com/'},
+  {id:'c10',rating:'4.5',name:'Knox Bistro',kind:'breakfast',sub:'French bistro brunch',area:'Knox-Henderson',tags:['Breakfast'],
+   desc:'French-leaning Knox-Henderson bistro near Georgie, known for its brunch burger.',
+   addr:'3230 Knox St, Dallas TX 75205',lat:32.8213,lng:-96.7918,
+   maps:'https://maps.google.com/?q=Knox+Bistro+Knox+St+Dallas+TX',url:'https://knoxbistro.com/'},
 ];
 
 // Fun with Fane / attractions
@@ -1367,7 +1412,8 @@ function markerIcon(cat) {
   var col = CAT_COLORS[theme][colorKey];
   var cream = (theme === 'dark') ? '#241f2b' : '#faf6ef';
   var px = (cat === 'stay') ? 42 : 36;
-  return L.divIcon({html:chipMarkup(col, MARKER_GLYPHS[cat] || MARKER_GLYPHS.eat, cream, px),
+  var glyphKey = (cat === 'asian') ? 'gate' : cat;
+  return L.divIcon({html:chipMarkup(col, MARKER_GLYPHS[glyphKey] || MARKER_GLYPHS.eat, cream, px),
     className:'mk', iconSize:[px,px], iconAnchor:[px/2, px/2], popupAnchor:[0, -(px/2+3)]});
 }
 function tileUrl() {
@@ -1423,6 +1469,12 @@ function initMap() {
     markers[r.id] = addMarker(r.lat, r.lng, 'eat', 'eat',
       poiPopup(r.name, r.cuisine+' · '+r.price, CAT_COLORS.light.eat, r.desc, r.addr, r.maps, r.url, 'View on Google'));
   }); });
+
+  // Cafes / coffee / breakfast
+  CAFES.forEach(function(c){
+    markers[c.id] = addMarker(c.lat, c.lng, 'eat', 'eat',
+      poiPopup(c.name, c.sub, CAT_COLORS.light.eat, c.desc, c.addr, c.maps, c.url, 'Website'));
+  });
 
   // Gyms (Climb)
   GYMS.forEach(function(g){
@@ -1502,12 +1554,15 @@ function itemRow(o){
 
 // ─── EAT & DRINK ──────────────────────────────────────────────────────────────────
 let eatFilter = 'All';
-const EAT_CHIPS = ['All','BBQ','Tacos','Italian','Seafood','Fine dining'];
+const EAT_CHIPS = ['All','Coffee','Breakfast','BBQ','Tacos','Italian','Seafood','Fine dining'];
 function eatItems(){
   var arr = [];
   RESTAURANTS.forEach(function(br){ br.items.forEach(function(r){
     arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,rating:r.rating,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng});
   }); });
+  CAFES.forEach(function(c){
+    arr.push({id:c.id,name:c.name,sub:c.sub+' · '+c.area,rating:c.rating,pill:c.pill||'',tags:c.tags||[],lat:c.lat,lng:c.lng});
+  });
   return arr;
 }
 function setEatFilter(tag){ eatFilter = tag; renderEat(); }

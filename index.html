@@ -1321,7 +1321,7 @@ const GYMS = [
   {id:'g1',rating:'4.8',name:'Movement Fort Worth',sub:'Bouldering · Fort Worth',pill:'Top rated',addr:'2828 W Lancaster Ave, Fort Worth TX 76107',
    desc:"Bouldering-focused gym in Fort Worth's Cultural District, about 45 min west. Same Movement network as the Dallas gyms.",
    lat:32.7305,lng:-97.3580,maps:'https://maps.google.com/?q=2828+W+Lancaster+Ave+Fort+Worth+TX',url:'https://movementgyms.com/fort-worth/'},
-  {id:'g2',rating:'4.7',name:'Movement Design District',sub:'45,000 sq ft · Design District',pill:'Largest',addr:'141 Glass St, Dallas TX 75207',
+  {id:'g2',rating:'4.7',featured:true,name:'Movement Design District',sub:'45,000 sq ft · Design District',pill:'Largest',addr:'141 Glass St, Dallas TX 75207',
    desc:"DFW's largest gym at 45,000 sq ft with 56-ft walls. Bouldering, lead, top rope, yoga, and a rooftop patio.",
    lat:32.7899,lng:-96.8231,maps:'https://maps.google.com/?q=141+Glass+St+Dallas+TX',url:'https://movementgyms.com/design-district/'},
   {id:'g3',rating:'4.6',name:'Movement The Hill',sub:'Bouldering · Walnut Hill',pill:'',addr:'8021 Walnut Hill Ln, Dallas TX 75231',
@@ -1623,7 +1623,11 @@ function renderEat(){
 
 // ─── CLIMB & DO ───────────────────────────────────────────────────────────────────
 function renderDo(){
-  var gyms = GYMS.slice().sort(function(a,b){ return parseFloat(b.rating) - parseFloat(a.rating); });
+  var gyms = GYMS.slice().sort(function(a,b){
+    if (a.featured && !b.featured) return -1;
+    if (b.featured && !a.featured) return 1;
+    return parseFloat(b.rating) - parseFloat(a.rating);
+  });
   document.getElementById('gy-list').innerHTML = gyms.map(function(g){
     return itemRow({id:g.id,name:g.name,sub:g.sub,price:'★ '+g.rating,pill:g.pill,lat:g.lat,lng:g.lng});
   }).join('');

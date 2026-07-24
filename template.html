@@ -214,8 +214,14 @@ html[data-theme="dark"] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) b
 .sheet .srow .c{margin-left:auto;color:var(--muted);font-size:12.5px}
 .loc-toast{bottom:12px}
 .loc-toast-msg{font-size:13.5px;line-height:1.5;margin-bottom:12px}
+.loc-toast-msg.accent{color:var(--accent);font-weight:600}
 .loc-toast-acts{display:flex;gap:8px}
 .loc-toast-acts .btn-p,.loc-toast-acts .btn-s{flex:1;text-align:center;font-size:13px;padding:9px 14px}
+.loc-toast.sys{border-left:3px solid var(--accent)}
+.sys-msg{font-size:13.5px;line-height:1.6;margin-bottom:12px}
+.sys-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--accent);
+  background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:5px;padding:2px 6px;
+  margin:0 8px 3px 0;vertical-align:middle;text-transform:uppercase}
 .leaflet-control-attribution{font-size:9px!important;opacity:.6}
 .leaflet-marker-icon.mk{background:none;border:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.28))}
 .leaflet-marker-icon.me-mk{background:none;border:none}
@@ -953,15 +959,27 @@ function poiPopup(name, catText, catColor, desc, addr, mapsUrl, siteUrl, siteLab
     '<a class="pu-a pu-a-s" href="'+siteUrl+'" target="_blank" rel="noopener">'+(siteLabel||'Website')+'</a>';
 }
 
-// ─── "I'M HERE" LOCATION DOT ──────────────────────────────────────────────────────
+// ─── "I'M HERE" LOCATION DOT (primer pattern) ─────────────────────────────────────
+// We ask via our own in-app bubble first and only call the real geolocation
+// API if the crawler taps Approve — so a reflexive "no" never burns the
+// browser's one-shot permission prompt. navigator.permissions lets us also
+// skip straight to a silent fetch (already granted) or a "go fix it in
+// settings" message (already denied) without asking again pointlessly.
 let meMarker = null;
 let meLoopTimer = null;
-let locBlocked = false; // set after a denial this session; suppresses auto re-attempts until the user retries
-let locDenyCount = 0;   // session-only; resets on each page load so the gag restarts friendly
+let locBlocked = false;     // true once declined/denied this session; suppresses auto re-attempts until retry
+let locPrimerOpen = false;  // guards against stacking multiple bubbles
+let locGrantedOnce = false; // show the approve message once per session, not on every silent refresh
+let locDenyCount = 0;
+
+const LOC_PRIMER_MSG = 'Hey crawler, we need access to your location in order to provide you full utilization of the Dallas dungeon, HUD map interface.';
+const LOC_APPROVE_MSG = 'Now get out there and kill kill kill.';
 const LOC_DENY_MSGS = [
-  "Pretty please can I have your location data? I'll only use it a widdle bit. 👉👈",
-  "SHOW ME WHERE YOUR TOES ARE!"
+  '[SYSTEM]: Location access denied. Logged for the record. The dungeon updates around you regardless of your cooperation, crawler.',
+  '[SYSTEM]: Denied twice now. Bold, for someone with your combat rating. Mockery has been queued.'
 ];
+const LOC_HARDBLOCK_MSG = '[SYSTEM]: Access is hard-blocked at the browser level now. Crawler must manually override it in site settings to proceed. The System will not ask again.';
+
 function meIcon() {
   return L.divIcon({html:'<div class="me-wrap"><div class="me-ring"></div><div class="me-dot"></div></div>',
     className:'me-mk', iconSize:[16,16], iconAnchor:[8,8]});
@@ -975,24 +993,60 @@ function clearMeMarker() {
   if (meMarker && map) map.removeLayer(meMarker);
   meMarker = null;
 }
-function locToast(msg) {
+function locBubble(html, extraClass) {
   document.querySelectorAll('.loc-toast').forEach(function(t){ t.remove(); });
   var host = document.querySelector('.mapwrap');
-  if (!host) return;
+  if (!host) return null;
   var el = document.createElement('div');
-  el.className = 'sheet loc-toast';
-  el.innerHTML =
-    '<div class="loc-toast-msg">'+msg+'</div>' +
-    '<div class="loc-toast-acts">' +
-      '<button class="btn-s" onclick="this.closest(\'.loc-toast\').remove()">Not now</button>' +
-      '<button class="btn-p" onclick="this.closest(\'.loc-toast\').remove();retryLocate()">Try again</button>' +
-    '</div>';
+  el.className = 'sheet loc-toast' + (extraClass ? ' ' + extraClass : '');
+  el.innerHTML = html;
   host.appendChild(el);
+  return el;
+}
+function closeLocBubble() {
+  document.querySelectorAll('.loc-toast').forEach(function(t){ t.remove(); });
+  locPrimerOpen = false;
+}
+function showLocationPrimer() {
+  if (locPrimerOpen) return;
+  locPrimerOpen = true;
+  locBubble(
+    '<div class="loc-toast-msg">'+LOC_PRIMER_MSG+'</div>' +
+    '<div class="loc-toast-acts">' +
+      '<button class="btn-s" onclick="declineLocation()">Deny</button>' +
+      '<button class="btn-p" onclick="approveLocation()">Approve</button>' +
+    '</div>'
+  );
+}
+function showSysMessage(msg) {
+  locBubble(
+    '<div class="sys-msg"><span class="sys-tag">System</span>'+msg+'</div>' +
+    '<div class="loc-toast-acts">' +
+      '<button class="btn-s" onclick="closeLocBubble()">Dismiss</button>' +
+      '<button class="btn-p" onclick="closeLocBubble();retryLocate()">Try again</button>' +
+    '</div>',
+    'sys'
+  );
+}
+function showApproveToast() {
+  var el = locBubble('<div class="loc-toast-msg accent">'+LOC_APPROVE_MSG+'</div>');
+  if (el) setTimeout(function(){ if (el.parentNode) el.remove(); }, 3200);
+}
+function approveLocation() {
+  closeLocBubble();
+  attemptLocate();
+}
+function declineLocation() {
+  closeLocBubble();
+  locBlocked = true;
+  locDenyCount++;
+  showSysMessage(LOC_DENY_MSGS[Math.min(locDenyCount, LOC_DENY_MSGS.length) - 1]);
 }
 function onLocateSuccess(pos) {
   locBlocked = false;
   locDenyCount = 0;
   placeMeMarker(pos.coords.latitude, pos.coords.longitude);
+  if (!locGrantedOnce) { locGrantedOnce = true; showApproveToast(); }
 }
 function onLocateError(err) {
   // Once a browser has denied location once, retries on the same page
@@ -1002,29 +1056,43 @@ function onLocateError(err) {
   locBlocked = true;
   stopLocateLoop();
   locDenyCount++;
-  locToast(LOC_DENY_MSGS[Math.min(locDenyCount, LOC_DENY_MSGS.length) - 1]);
-}
-function retryLocate() {
-  locBlocked = false;
-  attemptLocate();
+  showSysMessage(LOC_DENY_MSGS[Math.min(locDenyCount, LOC_DENY_MSGS.length) - 1]);
 }
 function attemptLocate() {
-  if (!bgLocationEnabled || !navigator.geolocation || currentView !== 'map' || locBlocked) return;
   navigator.geolocation.getCurrentPosition(onLocateSuccess, onLocateError,
     {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
 }
+function retryLocate() {
+  locBlocked = false;
+  requestLocation();
+}
+function requestLocation() {
+  if (!bgLocationEnabled || !navigator.geolocation || currentView !== 'map' || locBlocked) return;
+  if (meMarker) { attemptLocate(); return; } // already tracking this session — silent refresh
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({name:'geolocation'}).then(function(status){
+      if (status.state === 'granted') { attemptLocate(); }
+      else if (status.state === 'denied') { locBlocked = true; showSysMessage(LOC_HARDBLOCK_MSG); }
+      else { showLocationPrimer(); }
+    }).catch(function(){ showLocationPrimer(); });
+  } else {
+    showLocationPrimer(); // Permissions API unsupported — fall back to asking directly
+  }
+}
 function startLocateLoop() {
   if (!bgLocationEnabled || !navigator.geolocation) return;
-  attemptLocate();
+  requestLocation();
   if (meLoopTimer) clearInterval(meLoopTimer);
-  meLoopTimer = setInterval(attemptLocate, 10 * 60 * 1000);
+  meLoopTimer = setInterval(requestLocation, 10 * 60 * 1000);
 }
 function stopLocateLoop() {
   if (meLoopTimer) { clearInterval(meLoopTimer); meLoopTimer = null; }
+  closeLocBubble();
 }
 function onBgLocationChange() {
   if (!bgLocationEnabled) { stopLocateLoop(); clearMeMarker(); return; }
   locBlocked = false;
+  locGrantedOnce = false;
   if (currentView === 'map') startLocateLoop();
 }
 

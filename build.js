@@ -23,10 +23,23 @@ const fontsCss = `
 const heroDay   = 'data:image/jpeg;base64,' + b64('vendor/img/hero_day.jpg');
 const heroNight = 'data:image/jpeg;base64,' + b64('vendor/img/hero_night.jpg');
 
+// Locally-generated emblem tiles (vendor/img/logos/<poi-id>.jpg) inlined as
+// data URIs, keyed by POI id, for businesses/districts with no usable favicon.
+// Inlining keeps the standalone dallas-trip.html self-contained. See
+// mockups/_gen_logos.mjs for how these are drawn.
+const logoDir = path.join(__dirname, 'vendor/img/logos');
+const logoEntries = fs.existsSync(logoDir)
+  ? fs.readdirSync(logoDir).filter((f) => /\.jpe?g$/i.test(f)).map((f) => {
+      const id = f.replace(/\.[^.]+$/, '');
+      return `${JSON.stringify(id)}:'data:image/jpeg;base64,${b64('vendor/img/logos/' + f)}'`;
+    }).join(',')
+  : '';
+
 const result = template
   .replace('<!--LEAFLET_CSS-->', leafletCss)
   .replace('/*LEAFLET_JS*/', leafletJs)
   .replace('/*FONTS_CSS*/', fontsCss)
+  .replace('/*LOGO_IMG_DATA*/', logoEntries)
   .replace(/HERO_DAY_B64/g, heroDay)
   .replace(/HERO_NIGHT_B64/g, heroNight);
 

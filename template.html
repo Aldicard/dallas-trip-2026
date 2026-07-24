@@ -76,6 +76,38 @@ html[data-theme="dark"] .opt.dark{background:var(--accent);color:var(--accent-in
 .nv svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
 .nv.on{color:var(--accent)}
 
+/* Hamburger button (opens the full-sitemap tray) */
+.hb{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;
+  border:none;background:none;color:var(--ink);cursor:pointer;border-radius:9px}
+.hb svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+.side .hb{margin:0 0 14px 6px}
+
+/* Hamburger tray (full sitemap + settings) */
+.tray-backdrop{position:fixed;inset:0;z-index:2000;background:rgba(15,12,18,.45);opacity:0;pointer-events:none;transition:opacity .2s}
+.tray-backdrop.open{opacity:1;pointer-events:auto}
+.tray{position:fixed;top:0;left:0;bottom:0;z-index:2100;width:280px;max-width:84vw;
+  background:var(--panel);border-right:1px solid var(--line);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .25s ease;overflow-y:auto}
+.tray.open{transform:translateX(0)}
+.tray-top{display:flex;align-items:center;justify-content:space-between;padding:18px 10px 14px 18px}
+.tray-close{display:flex;align-items:center;justify-content:center;width:32px;height:32px;
+  border:none;background:none;color:var(--muted);cursor:pointer;border-radius:9px}
+.tray-close svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.tray-nav{display:flex;flex-direction:column;gap:2px;padding:4px 12px}
+.tn{display:flex;align-items:center;gap:13px;padding:12px 13px;border-radius:12px;color:var(--muted);
+  font-size:14.5px;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.tn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;flex-shrink:0}
+.tn.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.tray-settings{margin-top:auto;padding:16px 18px calc(20px + env(safe-area-inset-bottom));border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:14px}
+.tray-settings-h{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tray-set-row{display:flex;flex-direction:column;gap:7px}
+.tray-set-row label{font-size:12.5px;color:var(--muted);font-weight:500}
+html:not([data-maps="apple"]) .opt.google{background:var(--accent);color:var(--accent-ink)}
+html[data-maps="apple"] .opt.apple{background:var(--accent);color:var(--accent-ink)}
+html:not([data-bgloc="off"]) .opt.bgon{background:var(--accent);color:var(--accent-ink)}
+html[data-bgloc="off"] .opt.bgoff{background:var(--accent);color:var(--accent-ink)}
+
 /* ─── VIEWS ──────────────────────────────────────────────────────── */
 .view{display:none}
 .view.on{display:block}
@@ -104,6 +136,7 @@ html[data-theme="dark"] .opt.dark{background:var(--accent);color:var(--accent-in
 .thumb{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);border:1px solid var(--accent-line);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--accent)}
+.thumb img{width:100%;height:100%;object-fit:contain;border-radius:10px;padding:6px;box-sizing:border-box;background:#fff}
 .it-main{min-width:0;flex:1}
 .iname{font-family:'Fraunces',serif;font-size:16.5px;font-weight:500;letter-spacing:-.2px;line-height:1.2}
 .icat{font-size:12.5px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -160,6 +193,7 @@ html[data-theme="dark"] .sky-night{display:block}
   border-radius:14px;padding:11px 13px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
 .legend .lg{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink);font-weight:500;cursor:pointer;user-select:none}
 .legend .lg.off{opacity:.4}
+.legend .lg-cb{width:13px;height:13px;flex-shrink:0;cursor:pointer;margin:0}
 .legend .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .sheet{position:absolute;left:12px;right:12px;bottom:12px;z-index:1000;background:var(--panel);border:1px solid var(--line);
   border-radius:18px;box-shadow:var(--shadow);padding:13px 16px 15px}
@@ -168,8 +202,17 @@ html[data-theme="dark"] .sky-night{display:block}
 .sheet .srow{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13.5px;border-top:1px solid var(--line)}
 .sheet .srow:first-of-type{border-top:none}
 .sheet .srow .c{margin-left:auto;color:var(--muted);font-size:12.5px}
+.loc-toast{bottom:12px}
+.loc-toast-msg{font-size:13.5px;line-height:1.5;margin-bottom:12px}
+.loc-toast-acts{display:flex;gap:8px}
+.loc-toast-acts .btn-p,.loc-toast-acts .btn-s{flex:1;text-align:center;font-size:13px;padding:9px 14px}
 .leaflet-control-attribution{font-size:9px!important;opacity:.6}
 .leaflet-marker-icon.mk{background:none;border:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.28))}
+.leaflet-marker-icon.me-mk{background:none;border:none}
+.me-wrap{position:relative;width:16px;height:16px}
+.me-dot{position:absolute;inset:0;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.me-ring{position:absolute;inset:-8px;border-radius:50%;background:#3b82f6;opacity:.35;animation:me-pulse 2s ease-out infinite}
+@keyframes me-pulse{0%{transform:scale(.3);opacity:.55}100%{transform:scale(1.9);opacity:0}}
 
 /* ─── STAY & COSTS ───────────────────────────────────────────────── */
 .backlink{display:inline-flex;align-items:center;gap:7px;margin:2px 22px 0;padding:8px 0;color:var(--muted);
@@ -185,14 +228,23 @@ html[data-theme="dark"] .sky-night{display:block}
 .stay-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:14px;margin-bottom:16px}
 .stay-stat-v{font-family:'Fraunces',serif;font-size:22px;font-weight:600}
 .stay-stat-l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-.stay-loc{font-size:13px;color:var(--muted);margin-bottom:12px}
+.stay-loc{font-size:13px;color:var(--muted);margin-bottom:5px}
+.stay-addr{font-size:13px;color:var(--ink);font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.stay-addr svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:1.7;flex-shrink:0}
 .stay-desc{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:16px}
 .stay-hl-title{font-family:'Fraunces',serif;font-size:15px;font-weight:500;margin-bottom:10px}
 .stay-hl{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin-bottom:18px}
 .stay-hl-item{font-size:13px;color:var(--ink);display:flex;gap:8px;align-items:flex-start;line-height:1.4}
 .stay-hl-item svg{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:2;flex-shrink:0;margin-top:1px}
 .stay-acts{display:flex;gap:9px;flex-wrap:wrap}
-@media(max-width:520px){.stay-hl{grid-template-columns:1fr}}
+.stay-access{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:18px}
+.stay-access-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 18px}
+.stay-ac{display:flex;gap:10px;align-items:flex-start}
+.stay-ac svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:1.7;flex-shrink:0;margin-top:2px}
+.stay-ac-l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stay-ac-v{font-size:14px;color:var(--ink);font-weight:600;margin-top:2px;line-height:1.3;word-break:break-word}
+.stay-ac.full{grid-column:1 / -1}
+@media(max-width:520px){.stay-hl{grid-template-columns:1fr}.stay-access-grid{grid-template-columns:1fr}}
 
 .btn-p{padding:11px 20px;background:var(--accent);color:var(--accent-ink);border:none;border-radius:10px;
   font-size:13px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;
@@ -284,6 +336,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
 
   <!-- SIDEBAR (desktop) -->
   <aside class="side">
+    <button class="hb" onclick="openTray()" aria-label="Open full menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     <div class="brand-d">Dallas</div>
     <div class="brand-sub">Jul 24–26, 2026</div>
     <button class="navd on" data-view="overview" onclick="showView('overview')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Overview</button>
@@ -302,6 +355,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
 
     <!-- MOBILE TOPBAR -->
     <div class="topbar">
+      <button class="hb" onclick="openTray()" aria-label="Open full menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <div class="tb-title" id="tb-title">Dallas</div>
       <div class="seg">
         <button class="opt light" onclick="setTheme('light')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>Light</button>
@@ -335,7 +389,7 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
           <div class="sec-h">The dashboard</div>
           <div class="grid">
             <button class="card wide" onclick="showView('map')"><div style="display:flex;align-items:center;gap:14px"><div class="cico"><svg viewBox="0 0 24 24"><path d="M9 3 3 5.5v16L9 19l6 2.5 6-2.5v-16L15 6 9 3z"/><path d="M9 3v16M15 6v15.5"/></svg></div><div><div class="ctitle">Open the map</div><div class="ccount">Every pin in one view</div></div></div><span class="carw">→</span></button>
-            <button class="card" onclick="showView('eat')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg></div><div><div class="ctitle">Eat &amp; Drink</div><div class="ccount">19 spots shortlisted</div></div></button>
+            <button class="card" onclick="showView('eat')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg></div><div><div class="ctitle">Eat &amp; Drink</div><div class="ccount">20 spots shortlisted</div></div></button>
             <button class="card" onclick="showView('do')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M12 3v18M6 8l6-5 6 5M7 21h10"/></svg></div><div><div class="ctitle">Climb &amp; Do</div><div class="ccount">5 gyms + outings</div></div></button>
             <button class="card" onclick="showView('shop')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M6 8h12l1 13H5L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></div><div><div class="ctitle">Shop</div><div class="ccount">NorthPark · Harry Hines</div></div></button>
             <button class="card" onclick="showView('stay')"><div class="cico"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6"/></svg></div><div><div class="ctitle">Stay &amp; Costs</div><div class="ccount">Split the Airbnb + gas</div></div></button>
@@ -355,7 +409,6 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     <!-- VIEW: EAT & DRINK -->
     <section class="view wrap" id="view-eat">
       <div class="page-h">
-        <div class="overline">Eat &amp; Drink</div>
         <div class="page-title">Places to eat</div>
         <div class="page-sub">Coffee, breakfast, and dinner across the city, from Oak Cliff mornings to Deep Ellum barbecue and a fine-dining night out.</div>
       </div>
@@ -367,22 +420,20 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     <!-- VIEW: CLIMB & DO -->
     <section class="view wrap" id="view-do">
       <div class="page-h">
-        <div class="overline">Climb &amp; Do</div>
         <div class="page-title">Send it, then some</div>
         <div class="page-sub">Five climbing gyms anchor the weekend, plus family-friendly stops and a wander through the Asian District.</div>
       </div>
-      <div class="sub-h">Climbing <span class="cnt">5 gyms</span></div>
+      <div class="sub-h">Climbing <span class="cnt" id="gy-cnt"></span></div>
       <div class="list" id="gy-list"></div>
-      <div class="sub-h">Fun with Fane <span class="cnt">family-friendly</span></div>
+      <div class="sub-h">Fun with Fane <span class="cnt" id="ent-cnt"></span></div>
       <div class="list" id="ent-list"></div>
-      <div class="sub-h">Cultural crawl <span class="cnt">Asian District</span></div>
+      <div class="sub-h">Cultural crawl <span class="cnt" id="asian-cnt"></span></div>
       <div class="list" id="asian-list"></div>
     </section>
 
     <!-- VIEW: SHOP -->
     <section class="view wrap" id="view-shop">
       <div class="page-h">
-        <div class="overline">Shop</div>
         <div class="page-title">Racks &amp; retail</div>
         <div class="page-sub">Luxury malls, fragrance houses, and the thrift + flea-market scene along Harry Hines.</div>
       </div>
@@ -394,7 +445,6 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     <section class="view wrap" id="view-stay">
       <button class="backlink" onclick="showView('overview')"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Overview</button>
       <div class="page-h">
-        <div class="overline">Stay &amp; Costs</div>
         <div class="page-title">Where we're staying</div>
         <div class="page-sub">July 24–26 · 2 nights · 10 guests. It's booked, so this is just the split.</div>
       </div>
@@ -422,6 +472,47 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
   </main>
 </div>
 
+<!-- HAMBURGER TRAY: full sitemap + settings -->
+<div class="tray-backdrop" id="tray-backdrop" onclick="closeTray()"></div>
+<aside class="tray" id="tray">
+  <div class="tray-top">
+    <div class="brand-d" style="padding:0">Dallas</div>
+    <button class="tray-close" onclick="closeTray()" aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <nav class="tray-nav">
+    <button class="tn" data-view="overview" onclick="showView('overview');closeTray()"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Overview</button>
+    <button class="tn" data-view="map" onclick="showView('map');closeTray()"><svg viewBox="0 0 24 24"><path d="M9 3 3 5.5v16L9 19l6 2.5 6-2.5v-16L15 6 9 3z"/><path d="M9 3v16M15 6v15.5"/></svg>Map</button>
+    <button class="tn" data-view="eat" onclick="showView('eat');closeTray()"><svg viewBox="0 0 24 24"><path d="M5 3v18M5 3c-1.5 0-1.5 6 0 6M8 3v6a3 3 0 0 1-3 3M18 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg>Eat &amp; Drink</button>
+    <button class="tn" data-view="do" onclick="showView('do');closeTray()"><svg viewBox="0 0 24 24"><path d="M12 3v18M6 8l6-5 6 5M7 21h10"/></svg>Climb &amp; Do</button>
+    <button class="tn" data-view="shop" onclick="showView('shop');closeTray()"><svg viewBox="0 0 24 24"><path d="M6 8h12l1 13H5L6 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg>Shop</button>
+    <button class="tn" data-view="stay" onclick="showView('stay');closeTray()"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6"/></svg>Stay &amp; Costs</button>
+  </nav>
+  <div class="tray-settings">
+    <div class="tray-settings-h">Settings</div>
+    <div class="tray-set-row">
+      <label>Map links open in</label>
+      <div class="seg">
+        <button class="opt apple" onclick="setMapsPref('apple')">Apple Maps</button>
+        <button class="opt google" onclick="setMapsPref('google')">Google Maps</button>
+      </div>
+    </div>
+    <div class="tray-set-row">
+      <label>Theme</label>
+      <div class="seg">
+        <button class="opt light" onclick="setTheme('light')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></svg>Light</button>
+        <button class="opt dark" onclick="setTheme('dark')"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>Dark</button>
+      </div>
+    </div>
+    <div class="tray-set-row">
+      <label>Background location updates</label>
+      <div class="seg">
+        <button class="opt bgon" onclick="setBgLocation(true)">On</button>
+        <button class="opt bgoff" onclick="setBgLocation(false)">Off</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
 <!-- BOTTOM NAV (mobile) -->
 <nav class="nav">
   <button class="nv on" data-view="overview" onclick="showView('overview')"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Overview</button>
@@ -445,7 +536,8 @@ const STAY = {
   title:'Modern Tropical 5 BR / 8 Beds Home w/ Yard',
   price:1092, beds:5, sleeps:8, baths:3.5, sqft:2877, nights:2,
   location:'South Dallas / N Oak Cliff, near Bishop Arts & the Dallas Zoo',
-  lat:32.7450, lng:-96.8290,
+  addr:'1429 Diceman Avenue, Dallas, TX 75203',
+  lat:32.7332, lng:-96.7881,
   desc:'Our home base for the trip: a modern tropical 5-bedroom with 8 beds and 3.5 baths across 2,877 sq ft. Upstairs game room with ping-pong, a 75-inch smart TV, spacious backyard, and a 2-car garage, minutes from Bishop Arts, the Dallas Zoo, and downtown.',
   highlights:[
     'Sleeps 8 across 5 bedrooms','Ping-pong game room',
@@ -454,7 +546,11 @@ const STAY = {
     'Fully equipped kitchen','Minutes from the Dallas Zoo'
   ],
   url:'https://www.airbnb.com/rooms/750594075849936083?check_in=2026-07-24&check_out=2026-07-26',
-  maps:'https://maps.google.com/?q=32.7450,-96.8290',
+  maps:'https://maps.google.com/?q=1429+Diceman+Ave+Dallas+TX+75203',
+  checkin:'4:00 PM', checkout:'11:00 AM',
+  doorCode:'2869',
+  wifi:'SpectrumSetup-FF', wifiPass:'writerharbor580',
+  parking:'Park in the driveway and garage',
 };
 
 const RESTAURANTS = [
@@ -466,6 +562,11 @@ const RESTAURANTS = [
        addr:'9661 Audelia Rd #112, Dallas TX 75238',lat:32.8784,lng:-96.7188,
        maps:'https://maps.google.com/?q=9661+Audelia+Rd+Dallas+TX',
        url:'https://www.google.com/search?q=Resident+Taqueria+Dallas+TX'},
+      {id:'r10',rating:'4.6',name:'Neko Yubu',cuisine:'Korean / yubu',area:'Northwest Dallas',price:'$10–20',tags:[],
+       desc:"DFW's first yubu spot: take-out Korean fried tofu pockets stuffed with salmon, bulgogi, or spicy pork, plus classic and rose tteokbokki.",
+       addr:'1499 Regal Row #105, Dallas TX 75247',lat:32.8348,lng:-96.8785,
+       maps:'https://maps.google.com/?q=1499+Regal+Row+Dallas+TX',
+       url:'https://www.nekoyubu.com/'},
       {id:'r2',rating:'4.4',name:'Cane Rosso',cuisine:'Neapolitan pizza',area:'Deep Ellum',price:'$10–15',tags:['Italian'],
        desc:'Authentic Neapolitan pizza in Deep Ellum. $10 margherita pies during happy hour, wood-fired crust.',
        addr:'2612 Commerce St, Dallas TX 75226',lat:32.7825,lng:-96.7855,
@@ -675,6 +776,11 @@ let allMarkers = [];        // {marker, cat} for theme recoloring
 let tileLayer = null;
 let currentView = 'overview';
 
+let mapsPref = 'google';    // 'google' | 'apple' — which app "Directions" links open
+try { mapsPref = localStorage.getItem('mapsPref') === 'apple' ? 'apple' : 'google'; } catch(e) {}
+let bgLocationEnabled = true; // background "I'm here" refresh on the Map view
+try { bgLocationEnabled = localStorage.getItem('bgLocation') !== 'off'; } catch(e) {}
+
 let calcExpenses = [
   {label:'Airbnb (2 nights, total)', amount:1092},
   {label:'Gas, round trip (est.)',   amount:151},
@@ -733,6 +839,32 @@ function syncThemeButtons() {
   if (meta) meta.setAttribute('content', t === 'dark' ? '#17121b' : '#f2eee7');
 }
 
+// ─── HAMBURGER TRAY & SETTINGS ────────────────────────────────────────────────────
+document.documentElement.setAttribute('data-maps', mapsPref);
+document.documentElement.setAttribute('data-bgloc', bgLocationEnabled ? 'on' : 'off');
+function openTray() {
+  document.getElementById('tray').classList.add('open');
+  document.getElementById('tray-backdrop').classList.add('open');
+}
+function closeTray() {
+  document.getElementById('tray').classList.remove('open');
+  document.getElementById('tray-backdrop').classList.remove('open');
+}
+function setMapsPref(pref) {
+  mapsPref = pref === 'apple' ? 'apple' : 'google';
+  document.documentElement.setAttribute('data-maps', mapsPref);
+  try { localStorage.setItem('mapsPref', mapsPref); } catch(e) {}
+  // Re-render the Stay card so its "Directions" button updates immediately;
+  // map popups update on open via the popupopen handler.
+  if (typeof renderStay === 'function') renderStay();
+}
+function setBgLocation(on) {
+  bgLocationEnabled = !!on;
+  document.documentElement.setAttribute('data-bgloc', bgLocationEnabled ? 'on' : 'off');
+  try { localStorage.setItem('bgLocation', bgLocationEnabled ? 'on' : 'off'); } catch(e) {}
+  if (typeof onBgLocationChange === 'function') onBgLocationChange();
+}
+
 // ─── VIEWS ──────────────────────────────────────────────────────────────────────
 const VIEW_TITLES = {overview:'Dallas', map:'Map', eat:'Eat & Drink', do:'Climb & Do', shop:'Shop', stay:'Stay & Costs'};
 function showView(id) {
@@ -747,6 +879,7 @@ function showView(id) {
   if (tb) tb.textContent = VIEW_TITLES[id] || 'Dallas';
   window.scrollTo(0, 0);
   if (id === 'map' && map) { setTimeout(function(){ map.invalidateSize(); }, 60); }
+  if (id === 'map') { startLocateLoop(); } else { stopLocateLoop(); }
 }
 
 // ─── MAP ─────────────────────────────────────────────────────────────────────────
@@ -789,13 +922,93 @@ function shopGlyph(s) {
   for (var k in SHOP_GLYPHS) { if (tags.indexOf(k) >= 0) return SHOP_GLYPHS[k]; }
   return 'mall';
 }
+function mapsLink(googleUrl) {
+  if (mapsPref !== 'apple' || !googleUrl) return googleUrl;
+  try {
+    var q = new URL(googleUrl).searchParams.get('q');
+    return q ? ('https://maps.apple.com/?q=' + encodeURIComponent(q)) : googleUrl;
+  } catch(e) { return googleUrl; }
+}
 function poiPopup(name, catText, catColor, desc, addr, mapsUrl, siteUrl, siteLabel) {
   return '<div class="pu-title">'+name+'</div>' +
     '<div class="pu-sub pu-cat" style="color:'+catColor+'">'+catText+'</div>' +
     '<div class="pu-sub">'+desc+'</div>' +
     '<div class="pu-sub">'+addr+'</div>' +
-    '<a class="pu-a pu-a-p" href="'+mapsUrl+'" target="_blank" rel="noopener">Directions</a>' +
+    '<a class="pu-a pu-a-p" href="'+mapsLink(mapsUrl)+'" data-maps="'+mapsUrl+'" target="_blank" rel="noopener">Directions</a>' +
     '<a class="pu-a pu-a-s" href="'+siteUrl+'" target="_blank" rel="noopener">'+(siteLabel||'Website')+'</a>';
+}
+
+// ─── "I'M HERE" LOCATION DOT ──────────────────────────────────────────────────────
+let meMarker = null;
+let meLoopTimer = null;
+let locBlocked = false; // set after a denial this session; suppresses auto re-attempts until the user retries
+let locDenyCount = 0;   // session-only; resets on each page load so the gag restarts friendly
+const LOC_DENY_MSGS = [
+  "Pretty please can I have your location data? I'll only use it a widdle bit. 👉👈",
+  "SHOW ME WHERE YOUR TOES ARE!"
+];
+function meIcon() {
+  return L.divIcon({html:'<div class="me-wrap"><div class="me-ring"></div><div class="me-dot"></div></div>',
+    className:'me-mk', iconSize:[16,16], iconAnchor:[8,8]});
+}
+function placeMeMarker(lat, lng) {
+  if (!map) return;
+  if (meMarker) { meMarker.setLatLng([lat, lng]); return; }
+  meMarker = L.marker([lat, lng], {icon:meIcon(), zIndexOffset:2000, interactive:false}).addTo(map);
+}
+function clearMeMarker() {
+  if (meMarker && map) map.removeLayer(meMarker);
+  meMarker = null;
+}
+function locToast(msg) {
+  document.querySelectorAll('.loc-toast').forEach(function(t){ t.remove(); });
+  var host = document.querySelector('.mapwrap');
+  if (!host) return;
+  var el = document.createElement('div');
+  el.className = 'sheet loc-toast';
+  el.innerHTML =
+    '<div class="loc-toast-msg">'+msg+'</div>' +
+    '<div class="loc-toast-acts">' +
+      '<button class="btn-s" onclick="this.closest(\'.loc-toast\').remove()">Not now</button>' +
+      '<button class="btn-p" onclick="this.closest(\'.loc-toast\').remove();retryLocate()">Try again</button>' +
+    '</div>';
+  host.appendChild(el);
+}
+function onLocateSuccess(pos) {
+  locBlocked = false;
+  locDenyCount = 0;
+  placeMeMarker(pos.coords.latitude, pos.coords.longitude);
+}
+function onLocateError(err) {
+  if (err && err.code === err.PERMISSION_DENIED) {
+    locBlocked = true;
+    stopLocateLoop();
+    locDenyCount++;
+    locToast(LOC_DENY_MSGS[Math.min(locDenyCount, LOC_DENY_MSGS.length) - 1]);
+  }
+}
+function retryLocate() {
+  locBlocked = false;
+  attemptLocate();
+}
+function attemptLocate() {
+  if (!bgLocationEnabled || !navigator.geolocation || currentView !== 'map' || locBlocked) return;
+  navigator.geolocation.getCurrentPosition(onLocateSuccess, onLocateError,
+    {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
+}
+function startLocateLoop() {
+  if (!bgLocationEnabled || !navigator.geolocation) return;
+  attemptLocate();
+  if (meLoopTimer) clearInterval(meLoopTimer);
+  meLoopTimer = setInterval(attemptLocate, 10 * 60 * 1000);
+}
+function stopLocateLoop() {
+  if (meLoopTimer) { clearInterval(meLoopTimer); meLoopTimer = null; }
+}
+function onBgLocationChange() {
+  if (!bgLocationEnabled) { stopLocateLoop(); clearMeMarker(); return; }
+  locBlocked = false;
+  if (currentView === 'map') startLocateLoop();
 }
 
 function initMap() {
@@ -813,6 +1026,7 @@ function initMap() {
     '<div class="pu-title">Where we\'re staying</div>' +
     '<div class="pu-sub" style="font-weight:600;color:var(--ink)">'+STAY.title+'</div>' +
     '<div class="pu-sub">'+STAY.location+'</div>' +
+    '<div class="pu-sub">'+STAY.addr+'</div>' +
     '<div class="pu-sub">'+STAY.beds+' BR · '+STAY.sleeps+' beds · '+STAY.baths+' BA</div>' +
     '<div class="pu-price">$'+(STAY.price/MEMBERS).toFixed(2)+' <span>/ person lodging</span></div>' +
     '<a class="pu-a pu-a-p" href="'+STAY.url+'" target="_blank" rel="noopener">View on Airbnb</a>' +
@@ -854,6 +1068,14 @@ function initMap() {
       poiPopup(p.name, p.cat, CAT_COLORS.light.asian, p.desc, p.addr, p.maps, p.url, 'Learn more'));
   });
 
+  // Keep popup "Directions" links honoring the current Apple/Google Maps
+  // preference even if it's changed after the popups were built.
+  map.on('popupopen', function(e){
+    var el = e.popup.getElement();
+    var a = el && el.querySelector('a.pu-a-p[data-maps]');
+    if (a) a.href = mapsLink(a.getAttribute('data-maps'));
+  });
+
   renderLegend();
 }
 
@@ -867,14 +1089,16 @@ const LEGEND = [
 function renderLegend() {
   document.getElementById('legend').innerHTML = LEGEND.map(function(l){
     return '<div class="lg" data-layer="'+l.key+'" onclick="toggleLayer(\''+l.key+'\')">' +
+      '<input type="checkbox" class="lg-cb" checked style="accent-color:'+l.color+'">' +
       '<span class="dot" style="background:'+l.color+'"></span>'+l.label+'</div>';
   }).join('');
 }
 function toggleLayer(key) {
   if (!map || !layers[key]) return;
   var row = document.querySelector('.lg[data-layer="'+key+'"]');
-  if (map.hasLayer(layers[key])) { map.removeLayer(layers[key]); if(row) row.classList.add('off'); }
-  else { map.addLayer(layers[key]); if(row) row.classList.remove('off'); }
+  var cb = row ? row.querySelector('.lg-cb') : null;
+  if (map.hasLayer(layers[key])) { map.removeLayer(layers[key]); if(row) row.classList.add('off'); if(cb) cb.checked = false; }
+  else { map.addLayer(layers[key]); if(row) row.classList.remove('off'); if(cb) cb.checked = true; }
 }
 function flyTo(lat, lng, id) {
   showView('map');
@@ -890,11 +1114,48 @@ function flyTo(lat, lng, id) {
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────────
 function escHtml(str){ return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function countLabel(n, word){ return n + ' ' + word + (n === 1 ? '' : 's'); }
 function initials(name){
   var stop={the:1,and:1,of:1,a:1};
   var words = name.replace(/[^A-Za-z0-9]+/g,' ').trim().split(/\s+/).filter(function(w){ return w && !stop[w.toLowerCase()]; });
   if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
   return name.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase();
+}
+// Manual overrides for items whose data `url` is just a Google search link
+// (no real business site to derive a domain from). Filled in by research —
+// omit an id to fall back to initials.
+const LOGO_OVERRIDES = {
+  r1: 'residenttaqueria.com',
+  r2: 'canerosso.com',
+  r3: 'rootschickenshak.com',
+  r4: 'pecanlodge.com',
+  r5: 'viatriozzi.com',
+  r6: 'pescacoastalclassics.com',
+  r7: 'georgiedallas.com',
+  r8: 'carbonevino.com',
+  r9: 'sanjhrestaurant.com',
+  as4: 'asiatimessquare.com',
+  s9: 'dollypythonvintage.com',
+  s10: 'thrift-giant.com',
+  s11: 'hhb.shop',
+};
+function logoDomain(o){
+  if (LOGO_OVERRIDES[o.id]) return LOGO_OVERRIDES[o.id];
+  if (!o.url || o.url.indexOf('google.com/search') >= 0 || o.url.indexOf('wikipedia.org') >= 0) return null;
+  try { return new URL(o.url).hostname.replace(/^www\./,''); } catch(e) { return null; }
+}
+// Locally-drawn emblem tiles (base64 JPEGs, inlined at build time) for POIs
+// with no usable favicon. Keyed by POI id; takes precedence over favicons.
+const LOGO_IMG = {/*LOGO_IMG_DATA*/};
+// Logo lookup chains two token-free favicon services, then falls back to
+// initials. (Clearbit's logo API was sunset Dec 2025, so it's not used.)
+function logoFallback(img){
+  if (!img.dataset.tried) {
+    img.dataset.tried = '1';
+    img.src = 'https://www.google.com/s2/favicons?domain=' + img.dataset.domain + '&sz=64';
+  } else {
+    img.parentNode.textContent = img.dataset.init || '';
+  }
 }
 function itemRow(o){
   var right = '';
@@ -903,8 +1164,17 @@ function itemRow(o){
   if (o.price)  right += '<span class="subprice">'+o.price+'</span>';
   var tail = right ? '<div class="iright">'+right+'</div>'
                    : (o.chevron ? '<div class="igo"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>' : '');
+  var domain = logoDomain(o);
+  var thumb;
+  if (LOGO_IMG[o.id]) {
+    thumb = '<div class="thumb"><img src="'+LOGO_IMG[o.id]+'" alt="" loading="lazy"></div>';
+  } else if (domain) {
+    thumb = '<div class="thumb"><img src="https://icons.duckduckgo.com/ip3/'+domain+'.ico" alt="" loading="lazy" data-domain="'+domain+'" data-init="'+initials(o.name)+'" onerror="logoFallback(this)"></div>';
+  } else {
+    thumb = '<div class="thumb">'+initials(o.name)+'</div>';
+  }
   return '<div class="item" onclick="flyTo('+o.lat+','+o.lng+',\''+o.id+'\')">' +
-      '<div class="thumb">'+initials(o.name)+'</div>' +
+      thumb +
       '<div class="it-main"><div class="iname">'+o.name+'</div><div class="icat">'+o.sub+'</div></div>' +
       tail + '</div>';
 }
@@ -913,28 +1183,36 @@ function itemRow(o){
 // Multi-select facets: type (cuisine/kind) and price tier. Empty = show all.
 let eatCats = [];
 let eatPrices = [];
+let eatPriceSort = null; // null | 'asc' | 'desc'
 const EAT_CATS = ['Coffee','Breakfast','BBQ','Tacos','Italian','Seafood','Fine dining'];
 const EAT_PRICES = ['$','$$','$$$'];
 function eatItems(){
   var arr = [];
   RESTAURANTS.forEach(function(br){ br.items.forEach(function(r){
-    arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,rating:r.rating,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng});
+    arr.push({id:r.id,name:r.name,sub:r.cuisine+' · '+r.area,price:r.price,rating:r.rating,pill:r.pill||'',tags:r.tags||[],lat:r.lat,lng:r.lng,url:r.url});
   }); });
   CAFES.forEach(function(c){
-    arr.push({id:c.id,name:c.name,sub:c.sub+' · '+c.area,price:c.price,rating:c.rating,pill:c.pill||'',tags:c.tags||[],lat:c.lat,lng:c.lng});
+    arr.push({id:c.id,name:c.name,sub:c.sub+' · '+c.area,price:c.price,rating:c.rating,pill:c.pill||'',tags:c.tags||[],lat:c.lat,lng:c.lng,url:c.url});
   });
   return arr;
 }
-function priceTier(p){
+function priceMid(p){
   var nums = (String(p||'').match(/\d+/g)||[]).map(Number);
-  if (!nums.length) return '';
-  var mid = nums.length > 1 ? (nums[0]+nums[1])/2 : nums[0];
+  return nums.length ? (nums.length > 1 ? (nums[0]+nums[1])/2 : nums[0]) : 0;
+}
+function priceTier(p){
+  var mid = priceMid(p);
+  if (!mid) return '';
   return mid < 15 ? '$' : (mid < 40 ? '$$' : '$$$');
 }
 function toggleIn(arr, v){ var i = arr.indexOf(v); if (i < 0) arr.push(v); else arr.splice(i,1); }
 function toggleEatCat(t){ toggleIn(eatCats, t); renderEat(); }
 function toggleEatPrice(t){ toggleIn(eatPrices, t); renderEat(); }
 function clearEatFilter(){ eatCats = []; eatPrices = []; renderEat(); }
+function cycleEatPriceSort(){
+  eatPriceSort = eatPriceSort === null ? 'asc' : (eatPriceSort === 'asc' ? 'desc' : null);
+  renderEat();
+}
 function renderEat(){
   var noneOn = (eatCats.length === 0 && eatPrices.length === 0);
   document.getElementById('eat-chips').innerHTML =
@@ -942,17 +1220,23 @@ function renderEat(){
     EAT_CATS.map(function(t){
       return '<div class="chip'+(eatCats.indexOf(t)>=0?' on':'')+'" onclick="toggleEatCat(\''+t+'\')">'+t+'</div>';
     }).join('');
+  var sortLabel = eatPriceSort === 'asc' ? 'Price: Low → High' : eatPriceSort === 'desc' ? 'Price: High → Low' : 'Sort by price';
   document.getElementById('eat-prices').innerHTML =
     '<span class="chip-label">Price</span>' +
     EAT_PRICES.map(function(t){
       return '<div class="chip'+(eatPrices.indexOf(t)>=0?' on':'')+'" onclick="toggleEatPrice(\''+t+'\')">'+t+'</div>';
-    }).join('');
+    }).join('') +
+    '<div class="chip'+(eatPriceSort?' on':'')+'" onclick="cycleEatPriceSort()">'+sortLabel+'</div>';
   var list = eatItems().filter(function(o){
     var catOk   = eatCats.length === 0   || (o.tags||[]).some(function(t){ return eatCats.indexOf(t) >= 0; });
     var priceOk = eatPrices.length === 0 || eatPrices.indexOf(priceTier(o.price)) >= 0;
     return catOk && priceOk;
   });
-  list.sort(function(a,b){ return (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0); });
+  if (eatPriceSort) {
+    list.sort(function(a,b){ return eatPriceSort === 'asc' ? priceMid(a.price) - priceMid(b.price) : priceMid(b.price) - priceMid(a.price); });
+  } else {
+    list.sort(function(a,b){ return (parseFloat(b.rating)||0) - (parseFloat(a.rating)||0); });
+  }
   document.getElementById('eat-list').innerHTML = list.map(itemRow).join('');
 }
 
@@ -964,26 +1248,29 @@ function renderDo(){
     return parseFloat(b.rating) - parseFloat(a.rating);
   });
   document.getElementById('gy-list').innerHTML = gyms.map(function(g){
-    return itemRow({id:g.id,name:g.name,sub:g.sub,price:'★ '+g.rating,pill:g.pill,lat:g.lat,lng:g.lng});
+    return itemRow({id:g.id,name:g.name,sub:g.sub,price:'★ '+g.rating,pill:g.pill,lat:g.lat,lng:g.lng,url:g.url});
   }).join('');
+  document.getElementById('gy-cnt').textContent = countLabel(gyms.length, 'gym');
   var ents = ENTERTAINMENT.slice().sort(function(a,b){ return parseFloat(b.rating) - parseFloat(a.rating); });
   document.getElementById('ent-list').innerHTML = ents.map(function(p){
-    return itemRow({id:p.id,name:p.name,sub:p.cat,rating:p.rating,lat:p.lat,lng:p.lng});
+    return itemRow({id:p.id,name:p.name,sub:p.cat,rating:p.rating,lat:p.lat,lng:p.lng,url:p.url});
   }).join('');
+  document.getElementById('ent-cnt').textContent = countLabel(ents.length, 'spot');
   var districts = ASIAN.filter(function(a){ return a.id !== 'as3'; });
   document.getElementById('asian-list').innerHTML = districts.map(function(p){
-    return itemRow({id:p.id,name:p.name,sub:p.eatCuisine,chevron:true,lat:p.lat,lng:p.lng});
+    return itemRow({id:p.id,name:p.name,sub:p.eatCuisine,lat:p.lat,lng:p.lng,url:p.url});
   }).join('');
+  document.getElementById('asian-cnt').textContent = countLabel(districts.length, 'stop');
 }
 
 // ─── SHOP ─────────────────────────────────────────────────────────────────────────
 let shopFilter = 'All';
 function shopItems(){
   var arr = SHOPPING.map(function(s){
-    return {id:s.id,name:s.name,sub:s.cat,tags:s.tags||[],pill:s.pill||'',rating:s.rating,lat:s.lat,lng:s.lng};
+    return {id:s.id,name:s.name,sub:s.cat,tags:s.tags||[],pill:s.pill||'',rating:s.rating,lat:s.lat,lng:s.lng,url:s.url};
   });
   var h = ASIAN.filter(function(a){ return a.id==='as3'; })[0];
-  if (h) arr.push({id:h.id,name:h.name,sub:'Korean grocery · Asian District',tags:['Asian District'],rating:'4.5',lat:h.lat,lng:h.lng});
+  if (h) arr.push({id:h.id,name:h.name,sub:'Korean grocery · Asian District',tags:['Asian District'],rating:'4.5',lat:h.lat,lng:h.lng,url:h.url});
   return arr;
 }
 function shopTags(){
@@ -1022,12 +1309,22 @@ function renderStay(){
         '<div><div class="stay-stat-v">$'+s.price.toLocaleString()+'</div><div class="stay-stat-l">'+s.nights+'-night total</div></div>' +
       '</div>' +
       '<div class="stay-loc">'+s.location+'</div>' +
+      '<div class="stay-addr"><svg viewBox="0 0 24 24"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>'+s.addr+'</div>' +
       '<p class="stay-desc">'+s.desc+'</p>' +
       '<div class="stay-hl-title">Highlights</div>' +
       '<div class="stay-hl">'+hl+'</div>' +
+      '<div class="stay-hl-title">Arrival &amp; access</div>' +
+      '<div class="stay-access"><div class="stay-access-grid">' +
+        '<div class="stay-ac"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg><div><div class="stay-ac-l">Check-in</div><div class="stay-ac-v">'+s.checkin+'</div></div></div>' +
+        '<div class="stay-ac"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg><div><div class="stay-ac-l">Check-out</div><div class="stay-ac-v">'+s.checkout+'</div></div></div>' +
+        '<div class="stay-ac"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><div><div class="stay-ac-l">Door code</div><div class="stay-ac-v">'+s.doorCode+'</div></div></div>' +
+        '<div class="stay-ac"><svg viewBox="0 0 24 24"><path d="M5 12.5a10 10 0 0 1 14 0M8 15.5a6 6 0 0 1 8 0"/><circle cx="12" cy="19" r="1"/></svg><div><div class="stay-ac-l">Wi-Fi network</div><div class="stay-ac-v">'+s.wifi+'</div></div></div>' +
+        '<div class="stay-ac"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l2 2M14 9l2 2"/></svg><div><div class="stay-ac-l">Wi-Fi password</div><div class="stay-ac-v">'+s.wifiPass+'</div></div></div>' +
+        '<div class="stay-ac"><svg viewBox="0 0 24 24"><path d="M7 17v-6h4a2.5 2.5 0 0 1 0 5H7"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg><div><div class="stay-ac-l">Parking</div><div class="stay-ac-v">'+s.parking+'</div></div></div>' +
+      '</div></div>' +
       '<div class="stay-acts">' +
         '<a class="btn-p" href="'+s.url+'" target="_blank" rel="noopener">View on Airbnb</a>' +
-        '<a class="btn-s" href="'+s.maps+'" target="_blank" rel="noopener">Directions</a>' +
+        '<a class="btn-s" href="'+mapsLink(s.maps)+'" target="_blank" rel="noopener">Directions</a>' +
         '<button class="btn-s" onclick="flyTo('+s.lat+','+s.lng+',\'stay\')">View on map</button>' +
       '</div>' +
     '</div>';
@@ -1039,7 +1336,7 @@ function renderCalc() {
     return '<div class="calc-row">' +
         '<input class="calc-lbl" type="text" value="'+escHtml(e.label)+'" placeholder="Expense name">' +
         '<div class="calc-amt-wrap"><span>$</span>' +
-          '<input class="calc-amt" type="number" min="0" step="0.01" inputmode="decimal" value="'+(e.amount||0)+'" placeholder="0" oninput="computeCalc()">' +
+          '<input class="calc-amt" type="text" inputmode="decimal" value="'+(e.amount||0)+'" placeholder="0" oninput="computeCalc()">' +
         '</div>' +
         '<button class="calc-del" title="Remove" onclick="delExpense('+i+')">&times;</button>' +
       '</div>';

@@ -852,12 +852,22 @@ html[data-theme="dark"] .sky-night{display:block}
 /* ─── MAP ────────────────────────────────────────────────────────── */
 .mapwrap{position:relative;height:calc(100dvh - 60px - 74px)}
 #map{position:absolute;inset:0;background:var(--panel2)}
+/* Voyager tiles are colorful by default (light). Dark mode inverts +
+   hue-rotates them into a dark basemap that keeps parks/water/roads
+   distinguishable, instead of a flat near-black tile set. */
+html:not([data-theme="dark"]) .leaflet-tile-pane{filter:saturate(1.15) contrast(1.05)}
+html[data-theme="dark"] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(0.93) contrast(0.88) saturate(1.25)}
 .legend{position:absolute;top:14px;left:14px;z-index:1000;background:var(--panel);border:1px solid var(--line);
-  border-radius:14px;padding:11px 13px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
-.legend .lg{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink);font-weight:500;cursor:pointer;user-select:none}
+  border-radius:14px;box-shadow:var(--shadow);display:flex;align-items:flex-start}
+.legend-toggle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;flex-shrink:0;
+  margin:8px 0 8px 7px;border:none;background:none;color:var(--muted);cursor:pointer;border-radius:8px}
+.legend-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .2s}
+.legend.collapsed .legend-toggle svg{transform:rotate(180deg)}
+.legend-body{display:flex;flex-direction:column;gap:8px;padding:11px 13px 11px 7px;overflow:hidden}
+.legend.collapsed .legend-body{display:none}
+.legend .lg{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink);font-weight:500;cursor:pointer;user-select:none;white-space:nowrap}
 .legend .lg.off{opacity:.4}
 .legend .lg-cb{width:13px;height:13px;flex-shrink:0;cursor:pointer;margin:0}
-.legend .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .sheet{position:absolute;left:12px;right:12px;bottom:12px;z-index:1000;background:var(--panel);border:1px solid var(--line);
   border-radius:18px;box-shadow:var(--shadow);padding:13px 16px 15px}
 .sheet .handle{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
@@ -1065,7 +1075,10 @@ if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
     <section class="view" id="view-map">
       <div class="mapwrap">
         <div id="map"></div>
-        <div class="legend" id="legend"></div>
+        <div class="legend" id="legend">
+          <button class="legend-toggle" onclick="toggleLegendCollapse()" aria-label="Collapse legend"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="legend-body" id="legend-body"></div>
+        </div>
       </div>
     </section>
 
@@ -1565,10 +1578,12 @@ function markerIcon(cat, glyph) {
     className:'mk', iconSize:[px,px], iconAnchor:[px/2, px/2], popupAnchor:[0, -(px/2+3)]});
 }
 function tileUrl() {
-  var theme = document.documentElement.getAttribute('data-theme') || 'light';
-  return theme === 'dark'
-    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+  // Voyager: CARTO's colorful style (green parks, blue water, warm roads) —
+  // used for both themes. Dark mode gets its "dark" look from a CSS filter
+  // on the tile pane (see .leaflet-tile-pane rules) rather than a flat
+  // grayscale tile set, so it stays legible and colorful instead of
+  // washing out to near-black.
+  return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
 }
 function swapTiles() {
   if (!map || !tileLayer) return;
@@ -1648,12 +1663,14 @@ function onLocateSuccess(pos) {
   placeMeMarker(pos.coords.latitude, pos.coords.longitude);
 }
 function onLocateError(err) {
-  if (err && err.code === err.PERMISSION_DENIED) {
-    locBlocked = true;
-    stopLocateLoop();
-    locDenyCount++;
-    locToast(LOC_DENY_MSGS[Math.min(locDenyCount, LOC_DENY_MSGS.length) - 1]);
-  }
+  // Once a browser has denied location once, retries on the same page
+  // often come back with a different (or no) error code depending on
+  // platform, not always PERMISSION_DENIED — so any failure here is
+  // treated as still-blocked rather than requiring an exact code match.
+  locBlocked = true;
+  stopLocateLoop();
+  locDenyCount++;
+  locToast(LOC_DENY_MSGS[Math.min(locDenyCount, LOC_DENY_MSGS.length) - 1]);
 }
 function retryLocate() {
   locBlocked = false;
@@ -1755,11 +1772,22 @@ const LEGEND = [
   {key:'stay',  label:'Stay',           color:'var(--cat-stay)'}
 ];
 function renderLegend() {
-  document.getElementById('legend').innerHTML = LEGEND.map(function(l){
+  document.getElementById('legend-body').innerHTML = LEGEND.map(function(l){
     return '<div class="lg" data-layer="'+l.key+'" onclick="toggleLayer(\''+l.key+'\')">' +
-      '<input type="checkbox" class="lg-cb" checked style="accent-color:'+l.color+'">' +
-      '<span class="dot" style="background:'+l.color+'"></span>'+l.label+'</div>';
+      '<input type="checkbox" class="lg-cb" checked style="accent-color:'+l.color+'">'+l.label+'</div>';
   }).join('');
+  syncLegendCollapse();
+}
+let legendCollapsed = false;
+try { legendCollapsed = localStorage.getItem('legendCollapsed') === '1'; } catch(e) {}
+function toggleLegendCollapse() {
+  legendCollapsed = !legendCollapsed;
+  try { localStorage.setItem('legendCollapsed', legendCollapsed ? '1' : '0'); } catch(e) {}
+  syncLegendCollapse();
+}
+function syncLegendCollapse() {
+  var el = document.getElementById('legend');
+  if (el) el.classList.toggle('collapsed', legendCollapsed);
 }
 function toggleLayer(key) {
   if (!map || !layers[key]) return;

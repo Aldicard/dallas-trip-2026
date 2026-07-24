@@ -875,12 +875,9 @@ html[data-theme="dark"] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) b
 .sheet .srow{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13.5px;border-top:1px solid var(--line)}
 .sheet .srow:first-of-type{border-top:none}
 .sheet .srow .c{margin-left:auto;color:var(--muted);font-size:12.5px}
-.loc-toast{bottom:12px}
-.loc-toast-msg{font-size:13.5px;line-height:1.5;margin-bottom:12px}
-.loc-toast-msg.accent{color:var(--accent);font-weight:600}
+.loc-toast{bottom:12px;border-left:3px solid var(--accent)}
 .loc-toast-acts{display:flex;gap:8px}
 .loc-toast-acts .btn-p,.loc-toast-acts .btn-s{flex:1;text-align:center;font-size:13px;padding:9px 14px}
-.loc-toast.sys{border-left:3px solid var(--accent)}
 .sys-msg{font-size:13.5px;line-height:1.6;margin-bottom:12px}
 .sys-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--accent);
   background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:5px;padding:2px 6px;
@@ -1640,13 +1637,13 @@ let locPrimerOpen = false;  // guards against stacking multiple bubbles
 let locGrantedOnce = false; // show the approve message once per session, not on every silent refresh
 let locDenyCount = 0;
 
-const LOC_PRIMER_MSG = 'Hey crawler, we need access to your location in order to provide you full utilization of the Dallas dungeon, HUD map interface.';
+const LOC_PRIMER_MSG = 'Hey Crawler, we need access to your location in order to provide you full utilization of the Dallas dungeon, HUD map interface.';
 const LOC_APPROVE_MSG = 'Now get out there and kill kill kill.';
 const LOC_DENY_MSGS = [
-  '[SYSTEM]: Location access denied. Logged for the record. The dungeon updates around you regardless of your cooperation, crawler.',
-  '[SYSTEM]: Denied twice now. Bold, for someone with your combat rating. Mockery has been queued.'
+  'Location access denied. Logged for the record. The dungeon updates around you regardless of your cooperation, Crawler.',
+  'Denied twice now. Bold, for someone with your combat rating. Mockery has been queued.'
 ];
-const LOC_HARDBLOCK_MSG = '[SYSTEM]: Access is hard-blocked at the browser level now. Crawler must manually override it in site settings to proceed. The System will not ask again.';
+const LOC_HARDBLOCK_MSG = 'Access is hard-blocked at the browser level now. Crawler must manually override it in site settings to proceed. The System will not ask again.';
 
 function meIcon() {
   return L.divIcon({html:'<div class="me-wrap"><div class="me-ring"></div><div class="me-dot"></div></div>',
@@ -1661,13 +1658,16 @@ function clearMeMarker() {
   if (meMarker && map) map.removeLayer(meMarker);
   meMarker = null;
 }
-function locBubble(html, extraClass) {
+// Every location-flow message (the primer ask, the approve confirmation,
+// deny escalations, the hard-block notice) renders through this one
+// builder so they all share the same System badge + accent-border look.
+function locBubble(msg, actionsHtml) {
   document.querySelectorAll('.loc-toast').forEach(function(t){ t.remove(); });
   var host = document.querySelector('.mapwrap');
   if (!host) return null;
   var el = document.createElement('div');
-  el.className = 'sheet loc-toast' + (extraClass ? ' ' + extraClass : '');
-  el.innerHTML = html;
+  el.className = 'sheet loc-toast';
+  el.innerHTML = '<div class="sys-msg"><span class="sys-tag">System</span>'+msg+'</div>' + (actionsHtml || '');
   host.appendChild(el);
   return el;
 }
@@ -1678,8 +1678,7 @@ function closeLocBubble() {
 function showLocationPrimer() {
   if (locPrimerOpen) return;
   locPrimerOpen = true;
-  locBubble(
-    '<div class="loc-toast-msg">'+LOC_PRIMER_MSG+'</div>' +
+  locBubble(LOC_PRIMER_MSG,
     '<div class="loc-toast-acts">' +
       '<button class="btn-s" onclick="declineLocation()">Deny</button>' +
       '<button class="btn-p" onclick="approveLocation()">Approve</button>' +
@@ -1687,17 +1686,15 @@ function showLocationPrimer() {
   );
 }
 function showSysMessage(msg) {
-  locBubble(
-    '<div class="sys-msg"><span class="sys-tag">System</span>'+msg+'</div>' +
+  locBubble(msg,
     '<div class="loc-toast-acts">' +
       '<button class="btn-s" onclick="closeLocBubble()">Dismiss</button>' +
       '<button class="btn-p" onclick="closeLocBubble();retryLocate()">Try again</button>' +
-    '</div>',
-    'sys'
+    '</div>'
   );
 }
 function showApproveToast() {
-  var el = locBubble('<div class="loc-toast-msg accent">'+LOC_APPROVE_MSG+'</div>');
+  var el = locBubble(LOC_APPROVE_MSG);
   if (el) setTimeout(function(){ if (el.parentNode) el.remove(); }, 3200);
 }
 function approveLocation() {

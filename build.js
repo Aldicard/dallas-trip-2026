@@ -1,14 +1,47 @@
-// Inlines Leaflet CSS+JS into the HTML template, writes final file(s)
+// Inlines Leaflet CSS+JS, the two brand fonts, and the hero images into the
+// HTML template, then writes the final self-contained file(s). Keeping every
+// asset inline is what lets dallas-trip.html work offline / as an email attachment.
 const fs = require('fs');
 const path = require('path');
 
-const leafletCss = fs.readFileSync(path.join(__dirname, 'vendor/leaflet/leaflet.css'), 'utf8');
-const leafletJs  = fs.readFileSync(path.join(__dirname, 'vendor/leaflet/leaflet.js'),  'utf8');
-const template   = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
+const read = (p) => fs.readFileSync(path.join(__dirname, p), 'utf8');
+const b64  = (p) => fs.readFileSync(path.join(__dirname, p)).toString('base64');
+
+const leafletCss = read('vendor/leaflet/leaflet.css');
+const leafletJs  = read('vendor/leaflet/leaflet.js');
+const template   = read('template.html');
+
+// Brand fonts — variable woff2 latin subsets, declared across the full weight
+// range so every Fraunces/Inter weight resolves from one file per family.
+const interB64    = b64('vendor/fonts/inter-latin.woff2');
+const frauncesB64 = b64('vendor/fonts/fraunces-latin.woff2');
+const fontsCss = `
+@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,${interB64}) format('woff2')}
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,${frauncesB64}) format('woff2')}`;
+
+// Hero images (already optimized ~45 KB each) as data URIs.
+const heroDay   = 'data:image/jpeg;base64,' + b64('vendor/img/hero_day.jpg');
+const heroNight = 'data:image/jpeg;base64,' + b64('vendor/img/hero_night.jpg');
+
+// Locally-generated emblem tiles (vendor/img/logos/<poi-id>.jpg) inlined as
+// data URIs, keyed by POI id, for businesses/districts with no usable favicon.
+// Inlining keeps the standalone dallas-trip.html self-contained. See
+// mockups/_gen_logos.mjs for how these are drawn.
+const logoDir = path.join(__dirname, 'vendor/img/logos');
+const logoEntries = fs.existsSync(logoDir)
+  ? fs.readdirSync(logoDir).filter((f) => /\.jpe?g$/i.test(f)).map((f) => {
+      const id = f.replace(/\.[^.]+$/, '');
+      return `${JSON.stringify(id)}:'data:image/jpeg;base64,${b64('vendor/img/logos/' + f)}'`;
+    }).join(',')
+  : '';
 
 const result = template
   .replace('<!--LEAFLET_CSS-->', leafletCss)
-  .replace('/*LEAFLET_JS*/', leafletJs);
+  .replace('/*LEAFLET_JS*/', leafletJs)
+  .replace('/*FONTS_CSS*/', fontsCss)
+  .replace('/*LOGO_IMG_DATA*/', logoEntries)
+  .replace(/HERO_DAY_B64/g, heroDay)
+  .replace(/HERO_NIGHT_B64/g, heroNight);
 
 // dallas-trip.html — for emailing/texting as a standalone attachment
 const out = path.join(__dirname, 'dallas-trip.html');
